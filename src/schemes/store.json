@@ -1,0 +1,160 @@
+{
+	"description": "",
+	"type": "object",
+	"properties": {
+		"AppStore": {
+			"type": "object",
+			"properties": {
+				"title": {
+					"type": "string",
+					"minLength": 1
+				},
+				"version": {
+					"type": "string",
+					"minLength": 1
+				}
+			},
+			"required": [
+				"title",
+				"version"
+			]
+		},
+		"PlayersStore": {
+			"type": "object",
+			"properties": {
+				"players": {
+					"type": "array",
+					"uniqueItems": true,
+					"minItems": 1,
+					"items": {
+						"required": [
+							"id",
+							"ref",
+							"name",
+							"number",
+							"position",
+							"image",
+							"group"
+						],
+						"properties": {
+							"id": {
+								"type": "number"
+							},
+							"ref": {
+								"type": "string",
+								"minLength": 1
+							},
+							"name": {
+								"type": "string",
+								"minLength": 1
+							},
+							"number": {
+								"type": "number"
+							},
+							"position": {
+								"type": "string",
+								"minLength": 1
+							},
+							"image": {
+								"type": "string",
+								"minLength": 1
+							},
+							"group": {
+								"type": "string",
+								"minLength": 1
+							}
+						}
+					}
+				},
+				"filter": {
+					"type": "string",
+					"minLength": 1
+				},
+				"showPlayerModal": {
+					"type": "boolean"
+				},
+				"editMode": {
+					"type": "boolean"
+				},
+				"selectedPlayer": {},
+				"query": {}
+			},
+			"required": [
+				"players",
+				"filter",
+				"showPlayerModal",
+				"editMode"
+			]
+		},
+		"OptionsStore": {
+			"type": "object",
+			"properties": {
+				"gameVariant": {
+					"type": "string",
+					"minLength": 1
+				},
+				"teamName": {
+					"type": "string",
+					"minLength": 1
+				},
+				"teamImage": {
+					"type": "string",
+					"minLength": 1
+				},
+				"imagePlayersRadius": {
+					"type": "number"
+				},
+				"imageSubstitutesRadius": {
+					"type": "number"
+				},
+				"backgroundColor": {
+					"type": "string",
+					"minLength": 1
+				},
+				"playerFontSize": {
+					"type": "number"
+				},
+				"SubstitutesFontSize": {
+					"type": "number"
+				},
+				"showText": {
+					"type": "boolean"
+				},
+				"showImages": {
+					"type": "boolean"
+				},
+				"showModal": {
+					"type": "boolean"
+				},
+				"leftOpen": {
+					"type": "boolean"
+				},
+				"rightOpen": {
+					"type": "boolean"
+				},
+				"leftView": {},
+				"rightView": {}
+			},
+			"required": [
+				"gameVariant",
+				"teamName",
+				"teamImage",
+				"imagePlayersRadius",
+				"imageSubstitutesRadius",
+				"backgroundColor",
+				"playerFontSize",
+				"SubstitutesFontSize",
+				"showText",
+				"showImages",
+				"showModal",
+				"leftOpen",
+				"rightOpen"
+			]
+		}
+	},
+	"required": [
+		"AppStore",
+		"PlayersStore",
+		"OptionsStore"
+	]
+}
