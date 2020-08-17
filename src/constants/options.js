@@ -11,4 +11,5 @@ export const DEFAULT_OPTIONS = {
 	SubstitutesFontSize   : 14,
 	showText              : true,
 	showImages            : true,
+	showOnlyInitials      : false
 };

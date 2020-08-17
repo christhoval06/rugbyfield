@@ -13,7 +13,6 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import MenuItem from "@material-ui/core/MenuItem/MenuItem";
 
-
 import {DEFAULT_OPTIONS} from "../../constants/options";
 import {GAME_VARIANTS} from "../../constants/players";
 
@@ -68,7 +67,7 @@ class OptionsComponent extends Component {
 		OptionsStore: PropTypes.object,
 		classes     : PropTypes.object,
 		anchor      : PropTypes.oneOf(['left', 'right']),
-		mixpanel: PropTypes.object
+		mixpanel    : PropTypes.object
 	};
 
 	constructor(props) {
@@ -83,11 +82,12 @@ class OptionsComponent extends Component {
 
 	onSubmit = () => {
 		const {OptionsStore} = this.props;
-		const {showText, showImages, gameVariant, teamName, teamImage, imagePlayersRadius, imageSubstitutesRadius, backgroundColor, playerFontSize, SubstitutesFontSize} = this.state;
+		const {showText, showImages, gameVariant, teamName, teamImage, imagePlayersRadius, imageSubstitutesRadius, backgroundColor, playerFontSize, SubstitutesFontSize, showOnlyInitials} = this.state;
 		this.props.mixpanel.track(`Save Options`);
 		OptionsStore.save({
 			showText,
 			showImages,
+			showOnlyInitials,
 			gameVariant,
 			teamName,
 			teamImage,
@@ -125,7 +125,7 @@ class OptionsComponent extends Component {
 
 	render() {
 		const {classes, anchor} = this.props;
-		const {showText, showImages, croppedImage, gameVariant, teamName, teamImage, imagePlayersRadius, imageSubstitutesRadius, backgroundColor, playerFontSize, SubstitutesFontSize} = this.state;
+		const {showOnlyInitials, showText, showImages, croppedImage, gameVariant, teamName, teamImage, imagePlayersRadius, imageSubstitutesRadius, backgroundColor, playerFontSize, SubstitutesFontSize} = this.state;
 
 		return (
 			<div>
@@ -244,6 +244,7 @@ class OptionsComponent extends Component {
 										  }
 										  label="Show Text"
 						/>
+
 						<FormControlLabel className={classes.formControlLabel}
 										  control={
 											  <Switch
@@ -254,6 +255,18 @@ class OptionsComponent extends Component {
 											  />
 										  }
 										  label="Show Images"
+						/>
+
+						<FormControlLabel className={classes.formControlLabel}
+										  control={
+											  <Switch
+												  checked={showOnlyInitials}
+												  onChange={this.handleChangeBoolean('showOnlyInitials')}
+												  value="showImages"
+												  color="primary"
+											  />
+										  }
+										  label="Only Initials"
 						/>
 
 					</div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import {compose} from 'recompose';
 import {inject, observer} from 'mobx-react';
-import {Group, Text} from 'react-konva';
+import {Group} from 'react-konva';
 import PropTypes from "prop-types";
 import {ROWS} from '../../constants/aligment';
 import PlayerCard from './player-card.group';

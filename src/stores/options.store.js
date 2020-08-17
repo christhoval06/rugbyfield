@@ -13,6 +13,7 @@ const Options = types
 		SubstitutesFontSize   : types.number,
 		showText              : true,
 		showImages            : true,
+		showOnlyInitials      : false,
 		showModal             : false,
 		leftOpen              : false,
 		rightOpen             : false,

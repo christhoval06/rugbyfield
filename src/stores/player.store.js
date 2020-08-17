@@ -73,6 +73,10 @@ const Player = types
 			const image = new Image();
 			image.src = self.image;
 			return image;
+		},
+		get initials() {
+			const [first, last] = self.name.split(' ');
+			return `${first.substr(0, 1)}${last.substr(0, 1)}`
 		}
 	}));
 

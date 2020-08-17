@@ -11,7 +11,7 @@ const PlayerInfoGroup = ({OptionsStore, player, attr}) => (
 				text={`${player.getNumber()}. ${player.name}`}
 				{...{
 					...attr.text,
-					y       : OptionsStore.showImages?  attr.text.y: attr.text.y - attr.image.width*0.3,
+					y       : (OptionsStore.showImages || OptionsStore.showOnlyInitials) ? attr.text.y : attr.text.y - attr.image.width * 0.3,
 					fontSize: OptionsStore.playerFontSize
 				}}/>)
 		}
