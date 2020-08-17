@@ -57,7 +57,7 @@ class Field extends Component {
 			{
 				text   : 'Save as File',
 				onClick: () => {
-					this.props.mixpanel.track('Download as File');
+					this.props.mixpanel.track('Download as File')
 					download(JSON.stringify(this.props.AppStore.toJSON()), `rf_${(new Date()).getTime()}.json`, 'application/json')
 				}
 			}

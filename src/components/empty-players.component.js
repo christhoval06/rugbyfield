@@ -93,7 +93,6 @@ class EmptyPlayersComponent extends Component {
 	}
 
 	onChangeFile = e => {
-		const self = this;
 		e.preventDefault();
 
 		const file = e.target.files[0];

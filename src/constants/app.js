@@ -1,4 +1,4 @@
 export const DEFAULT_APP = {
 	title  : 'RugbyField',
-	version: 'v0.1.1'
+	version: 'v0.1.2'
 };

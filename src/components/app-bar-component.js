@@ -109,6 +109,7 @@ class AppBarComponent extends Component {
 
 		const file = e.target.files[0];
 
+
 		this.props.AppStore.load(file)
 			.then(r => {
 				this.props.mixpanel.track('Load from File.');
@@ -158,7 +159,7 @@ class AppBarComponent extends Component {
 						{!PlayersStore.havePlayers && <AppTitleComponent/>}
 					</div>
 					<div>
-						<input ref={el => this.fileField = el} type="file" hidden accept="application/json,*.json"
+						<input ref={el => this.fileField = el} type="file" hidden
 							   name="file"
 							   onChange={this.onChangeFile}/>
 						<IconButton
