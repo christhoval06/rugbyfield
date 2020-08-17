@@ -6,10 +6,32 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 
 // A theme with custom primary and secondary color.
 const theme = createMuiTheme({
-	typography: {
+	overrides: {
+		MuiCssBaseline: {
+			'@global': {
+				'html, body, #app': {
+					width    : `100%`,
+					height   : `100%`,
+					margin   : 0,
+					padding  : 0,
+					overflowY: 'hidden',
+				},
+
+				'body': {
+					backgroundColor: '#dfdfdf',
+				},
+
+				':focus': {
+					outline: 'none !important',
+				},
+
+			},
+		},
+	},
+	typography    : {
 		useNextVariants: true,
 	},
-	palette: {
+	palette       : {
 		primary  : {
 			light: red[300],
 			main : red[500],
