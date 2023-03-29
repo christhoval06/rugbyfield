@@ -2,9 +2,9 @@ import React from 'react';
 import {compose} from 'recompose';
 import PropTypes from "prop-types";
 import {inject, observer} from 'mobx-react';
-import {withStyles} from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import Search from '@material-ui/icons/Search';
+import {withStyles} from '@mui/styles';
+import Paper from '@mui/material/Paper';
+import Search from '@mui/icons-material/Search';
 
 import {withMixpanel} from '../../context/MixpanelContext';
 

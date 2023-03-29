@@ -1,13 +1,16 @@
-import React, {Component} from 'react';
-import {inject, observer} from 'mobx-react';
-import PropTypes from "prop-types";
-import {Layer, Stage, Text} from 'react-konva';
-import {withStyles} from '@material-ui/core/styles/index';
+import React from 'react';
+import { inject, observer } from 'mobx-react';
+import PropTypes from 'prop-types';
+import { compose } from 'recompose';
+import { Layer, Stage, Text } from 'react-konva';
+import { withStyles } from '@mui/styles';
 import download from '../../utils/download.util';
 
-import {CANVA_H, CANVA_W} from '../../constants/field.metrics';
+import { useMenu } from '../../hooks/MenuProvider';
 
-import {withMixpanel} from '../../context/MixpanelContext';
+import { CANVA_H, CANVA_W } from '../../constants/field.metrics';
+
+import { withMixpanel } from '../../context/MixpanelContext';
 import BackgroundGroup from './background.group';
 import FieldGroup from './field.group';
 import HeaderGroup from './header.group';
@@ -16,113 +19,109 @@ import SubstitutesGroup from './substitutes.group';
 import TeamNameGroup from './team-name.group';
 
 const styles = {
-	container: {
-		position      : 'absolute',
-		marginTop     : 80,
-		flexGrow      : 1,
-		alignItems    : 'center',
-		justifyContent: 'center',
-		display       : 'flex',
-		width         : '100%',
-	}
+  container: {
+    position: 'absolute',
+    marginTop: 80,
+    flexGrow: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    display: 'flex',
+    width: '100%',
+  },
 };
 
-@withStyles(styles)
-@withMixpanel
-@inject('AppStore', 'PlayersStore')
-@observer
-class Field extends Component {
+function Field({ PlayersStore, classes, ...props }) {
+  const stage = React.useRef();
+  const { setMenu } = useMenu();
 
-	static propTypes = {
-		classes     : PropTypes.object,
-		AppStore    : PropTypes.object,
-		PlayersStore: PropTypes.object,
-		mixpanel    : PropTypes.object,
-		loaded      : PropTypes.func.isRequired,
-	};
+  React.useEffect(() => {
+    (function () {
+      if (!PlayersStore.havePlayers || !stage?.current) {
+        setMenu([]);
+        return;
+      }
 
-	getExtraMenu = () => {
-		if (!this.stage) return null;
-		const stage = this.stage.getStage();
+      const _stage = stage.current.getStage();
 
-		if (!stage) return null;
-		return [
-			{
-				text   : 'Save as Image',
-				onClick: () => {
-					this.props.mixpanel.track('Download as Image');
-					download(this.stage.getStage().toDataURL(), `rf_${(new Date()).getTime()}.png`, 'image/png');
-				}
-			},
-			{
-				text   : 'Save as File',
-				onClick: () => {
-					this.props.mixpanel.track('Download as File')
-					download(JSON.stringify(this.props.AppStore.toJSON()), `rf_${(new Date()).getTime()}.json`, 'application/json')
-				}
-			}
-		]
-	};
+      if (!_stage) {
+        setMenu([]);
+        return;
+      }
 
-	// componentWillUpdate(nextProps, nextState, snapshot) {
-	// 	const {PlayersStore, loaded} = nextProps;
-	// 	if (PlayersStore.havePlayers) {
-	// 		loaded(this.getExtraMenu());
-	// 	}
-	// }
+      setMenu([
+        {
+          text: 'Save as Image',
+          onClick: () => {
+            // this.props.mixpanel.track('Download as Image');
+            download(_stage.getStage().toDataURL(), `rf_${new Date().getTime()}.png`, 'image/png');
+          },
+        },
+        {
+          text: 'Save as File',
+          onClick: () => {
+            // props.mixpanel.track('Download as File')
+            download(
+              JSON.stringify(props.AppStore.toJSON()),
+              `rf_${new Date().getTime()}.json`,
+              'application/json',
+            );
+          },
+        },
+      ]);
+    })();
 
-	componentDidUpdate(prevProps, prevState, snapshot) {
-		const {PlayersStore, loaded} = this.props;
-		if (PlayersStore.havePlayers) {
-			loaded(this.getExtraMenu());
-		} else {
-			loaded(null)
-		}
-	}
+    return () => {
+      setMenu([]);
+    };
+  }, [PlayersStore.havePlayers, props.AppStore, setMenu]);
 
-	componentWillUnmount() {
-		const {loaded} = this.props;
-		loaded([]);
-	}
+  if (!PlayersStore.havePlayers) return null;
 
-	render() {
-		const {classes, PlayersStore} = this.props;
+  return (
+    <Stage width={CANVA_W} height={CANVA_H} ref={stage} className={classes.container}>
+      <Layer>
+        <BackgroundGroup />
+        <FieldGroup />
+        <HeaderGroup />
+        <PlayersInFieldGroup />
+        <TeamNameGroup />
+        <SubstitutesGroup />
 
-		if (!PlayersStore.havePlayers) return null;
+        {/*<Rect {...{*/}
+        {/*x           : 535,*/}
+        {/*y           : 720,*/}
+        {/*width       : 250,*/}
+        {/*height      : 60,*/}
+        {/*fill        : 'white',*/}
+        {/*cornerRadius: 10*/}
+        {/*}} />*/}
 
-		return (
-			<Stage width={CANVA_W} height={CANVA_H} ref={el => this.stage = el} className={classes.container}>
-				<Layer>
-					<BackgroundGroup/>
-					<FieldGroup/>
-					<HeaderGroup/>
-					<PlayersInFieldGroup/>
-					<TeamNameGroup/>
-					<SubstitutesGroup/>
-
-					{/*<Rect {...{*/}
-					{/*x           : 535,*/}
-					{/*y           : 720,*/}
-					{/*width       : 250,*/}
-					{/*height      : 60,*/}
-					{/*fill        : 'white',*/}
-					{/*cornerRadius: 10*/}
-					{/*}} />*/}
-
-					<Text
-						x={730}
-						y={780}
-						fontSize={10}
-						fontFamily='Arial'
-						fill='#fff'
-						padding={5}
-						align='right'
-						text='@rugbypty'
-						opacity={.5}/>
-				</Layer>
-			</Stage>
-		)
-	}
+        <Text
+          x={730}
+          y={780}
+          fontSize={10}
+          fontFamily='Arial'
+          fill='#fff'
+          padding={5}
+          align='right'
+          text='@rugbypty'
+          opacity={0.5}
+        />
+      </Layer>
+    </Stage>
+  );
 }
 
-export default Field;
+Field.propTypes = {
+  classes: PropTypes.object,
+  AppStore: PropTypes.object,
+  PlayersStore: PropTypes.object,
+  mixpanel: PropTypes.object,
+};
+
+export default compose(
+  // @withMixpanel
+  withStyles(styles),
+  inject('AppStore', 'PlayersStore'),
+  observer,
+)(Field);

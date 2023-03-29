@@ -1,113 +1,109 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {inject, observer} from 'mobx-react';
-import {withStyles} from '@material-ui/core/styles';
-import Divider from '@material-ui/core/Divider';
+import { compose } from 'recompose';
+import { inject, observer } from 'mobx-react';
+import { withStyles } from '@mui/styles';
+import Divider from '@mui/material/Divider';
 
-import {DEFAULT_PLAYER} from '../../constants/players';
-import {withMixpanel} from '../../context/MixpanelContext';
+import { DEFAULT_PLAYER } from '../../constants/players';
+import { withMixpanel } from '../../context/MixpanelContext';
 
-import CropperComponent from "../cropper.component";
+import CropperComponent from '../cropper.component';
 import OptionalHeaderComponent from './optional-header.component';
 import PlayerFormComponent from './player-form.component';
 
 const styles = {
-	form: {
-		display : 'flex',
-		flexWrap: 'wrap',
-	}
+  form: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
 };
 
-@withStyles(styles)
-@withMixpanel
-@inject('PlayersStore', 'OptionsStore')
-@observer
-class PlayerEditComponent extends Component {
+function PlayerEditComponent(props) {
+  const [state, setState] = React.useState(() => {
+    const { PlayersStore } = props;
+    let { image } = DEFAULT_PLAYER;
 
-	static propTypes = {
-		PlayersStore: PropTypes.object,
-		OptionsStore: PropTypes.object,
-		classes     : PropTypes.object,
-		anchor      : PropTypes.oneOf(['left', 'right']),
-		mixpanel: PropTypes.object
-	};
+    if (PlayersStore.editMode) {
+      image = PlayersStore.selectedPlayer.image;
+    }
+    return {
+      ...DEFAULT_PLAYER,
+      image,
+      croppedImage: null,
+      openPosition: false,
+      error: null,
+    };
+  });
 
-	constructor(props) {
-		super(props);
-		const {PlayersStore} = this.props;
-		let {image} = DEFAULT_PLAYER;
+  const onClose = React.useCallback(() => {
+    const { PlayersStore, OptionsStore, anchor } = props;
+    if (PlayersStore.showPlayerModal) {
+      PlayersStore.togglePlayerModal();
+    }
+    OptionsStore.closeDrawer(anchor);
+  }, [props]);
 
-		if (PlayersStore.editMode) {
-			image = PlayersStore.selectedPlayer.image;
-		}
+  React.useEffect(() => {
+    return () => {
+      setState({ ...DEFAULT_PLAYER });
+      onClose();
+    };
+  }, [onClose]);
 
-		this.state = {
-			...DEFAULT_PLAYER,
-			image,
-			croppedImage: null,
-			openPosition: false,
-			error       : null,
-		};
-	}
+  const onSubmit = (data) => {
+    const { PlayersStore } = props;
 
-	onSubmit = (data) => {
-		const {PlayersStore, mixpanel} = this.props;
+    const { image } = state;
 
-		const {image} = this.state;
+    const player = {
+      ...data,
+      image,
+    };
 
-		const player = {
-			...data,
-			image,
-		};
+    if (PlayersStore.editMode) {
+      // mixpanel.track(`Edit Player`);
+      PlayersStore.selectedPlayer.edit(player);
+    } else {
+      // mixpanel.track(`Add Player`);
+      PlayersStore.addPlayer(player);
+    }
 
-		if (PlayersStore.editMode) {
-			mixpanel.track(`Edit Player`);
-			PlayersStore.selectedPlayer.edit(player);
-		} else {
-			mixpanel.track(`Add Player`);
-			PlayersStore.addPlayer(player);
-		}
+    onClose();
+  };
 
-		this.onClose();
-	};
+  const onCrop = (croppedImage) => {
+    // this.props.mixpanel.track('Crop Image.');
+    setState((s) => ({ ...s, image: croppedImage, croppedImage }));
+  };
 
-	onCrop = croppedImage => {
-		this.props.mixpanel.track('Crop Image.');
-		this.setState({image: croppedImage, croppedImage})
-	};
+  const { classes, anchor } = props;
+  const { image, croppedImage } = state;
 
-	onClose = () => {
-		const {PlayersStore, OptionsStore, anchor} = this.props;
-		if (PlayersStore.showPlayerModal) {
-			PlayersStore.togglePlayerModal();
-		}
-		OptionsStore.closeDrawer(anchor);
-	};
+  return (
+    <div>
+      <OptionalHeaderComponent anchor={anchor} onClick={onClose} title='Player' />
+      <Divider />
+      <form className={classes.form} noValidate autoComplete='off'>
+        <CropperComponent image={croppedImage || image} defaultImage={image} onCrop={onCrop} />
 
-	render() {
-		const {classes, anchor} = this.props;
-		const {image, croppedImage} = this.state;
-
-		return (
-			<div>
-				<OptionalHeaderComponent anchor={anchor} onClick={this.onClose} title="Player"/>
-				<Divider/>
-				<form className={classes.form} noValidate autoComplete="off">
-					<CropperComponent
-						image={croppedImage || image}
-						defaultImage={image}
-						onCrop={this.onCrop}/>
-
-					<PlayerFormComponent onSubmit={this.onSubmit}/>
-				</form>
-			</div>
-		);
-	}
-
-	componentWillUnmount() {
-		this.setState({...DEFAULT_PLAYER});
-		this.onClose();
-	}
+        <PlayerFormComponent onSubmit={onSubmit} />
+      </form>
+    </div>
+  );
 }
 
-export default PlayerEditComponent;
+PlayerEditComponent.propTypes = {
+  PlayersStore: PropTypes.object,
+  OptionsStore: PropTypes.object,
+  classes: PropTypes.object,
+  anchor: PropTypes.oneOf(['left', 'right']),
+  mixpanel: PropTypes.object,
+};
+
+export default compose(
+  withStyles(styles),
+  // @withMixpanel
+  inject('PlayersStore', 'OptionsStore'),
+  observer,
+)(PlayerEditComponent);

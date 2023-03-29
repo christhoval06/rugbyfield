@@ -1,4 +1,6 @@
+import json from '../../package.json';
+
 export const DEFAULT_APP = {
 	title  : 'RugbyField',
-	version: 'v0.1.2'
+	version: `v${json.version}`
 };

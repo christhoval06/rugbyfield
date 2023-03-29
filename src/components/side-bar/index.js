@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from "prop-types";
-import {withStyles} from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import Divider from '@material-ui/core/Divider';
+import {withStyles} from '@mui/styles';
+import Drawer from '@mui/material/Drawer';
+import Divider from '@mui/material/Divider';
 
 import PlayerListComponent from './player-list.component';
 import HeaderComponent from './header.component';

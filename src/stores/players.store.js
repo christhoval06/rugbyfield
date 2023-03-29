@@ -37,6 +37,7 @@ const PlayersStore = types
 			const id = self.players.reduce((maxId, player) => Math.max(player.id, maxId), 0) + 1;
 			self.players.unshift({...{id, ref: `player_${id}`}, ...player});
 			self.editMode = false;
+			console.log('self.players', self.players);
 		},
 		removePlayer(player) {
 			destroy(player);

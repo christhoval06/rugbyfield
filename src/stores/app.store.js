@@ -15,7 +15,10 @@ export default types
 				reader.onloadend = () => {
 					try {
 						const data = JSON.parse(reader.result);
-						storeValidator(data);
+						const isValid = storeValidator(data);
+						if(!isValid){
+							reject(new Error('File no valid'));
+						}
 						self.update(data, resolve, reject)
 					} catch (e) {
 						console.error(e);
@@ -37,9 +40,9 @@ export default types
 				return reject(new Error('not-options-config'))
 			}
 
-			if (data['AppStore'].version !== self.version) {
-				return reject(new Error('mismatch-version'))
-			}
+			// if (data['AppStore'].version !== self.version) {
+			// 	return reject(new Error('mismatch-version'))
+			// }
 
 			// Object.keys(data)
 			applySnapshot(root, data);

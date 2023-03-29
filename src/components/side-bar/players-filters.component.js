@@ -1,65 +1,68 @@
-import React, {Component} from 'react';
-import {observer, inject} from 'mobx-react';
-import IconButton from '@material-ui/core/IconButton';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import MoreVert from '@material-ui/icons/MoreVert';
+import React from 'react';
+import compose from 'recompose/compose';
+import { observer, inject } from 'mobx-react';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import MoreVert from '@mui/icons-material/MoreVert';
 
 import {
-	PLAYER_GROUP_BACKS,
-	PLAYER_GROUP_FORDWARDS,
-	PLAYER_GROUP_SUBSTITUTE,
-	SHOW_ALL,
-	SHOW_BACKS,
-	SHOW_FORDWARDS,
-	SHOW_SUBSTITUTE
-} from "../../constants/players";
+  PLAYER_GROUP_BACKS,
+  PLAYER_GROUP_FORDWARDS,
+  PLAYER_GROUP_SUBSTITUTE,
+  SHOW_ALL,
+  SHOW_BACKS,
+  SHOW_FORDWARDS,
+  SHOW_SUBSTITUTE,
+} from '../../constants/players';
 
-@inject('PlayersStore')
-@observer
-class PlayersFiltersComponent extends Component {
-	state = {
-		anchorEl: null,
-	};
+function PlayersFiltersComponent(props) {
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
-	handleMenu = event => {
-		this.setState({anchorEl: event.currentTarget});
-	};
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-	handleClose = (filter) => {
-		this.setState({anchorEl: null});
-		this.props.PlayersStore.setFilter(filter);
-	};
+  const handleClose = (filter) => {
+    setAnchorEl(null);
+    props.PlayersStore.setFilter(filter);
+  };
 
-	render() {
-		const {PlayersStore} = this.props;
-		if (PlayersStore.players.length === 0) return null;
+  const { PlayersStore } = props;
+  if (PlayersStore.players.length === 0) return null;
 
-		const {anchorEl} = this.state;
-		const open = Boolean(anchorEl);
+  const open = Boolean(anchorEl);
 
-		return (
-			<div>
-				<IconButton
-					aria-owns={open ? 'menu-filters' : null}
-					aria-haspopup="true"
-					onClick={this.handleMenu}
-					color="inherit">
-					<MoreVert/>
-				</IconButton>
-				<Menu
-					id="menu-filters"
-					anchorEl={anchorEl}
-					open={open}
-					onClose={() => this.handleClose(null)}>
-					{[{text: 'ALL', onClick: () => this.handleClose(SHOW_ALL)},
-					  {text: PLAYER_GROUP_BACKS.toUpperCase(), onClick: () => this.handleClose(SHOW_BACKS)},
-					  {text: PLAYER_GROUP_FORDWARDS.toUpperCase(), onClick: () => this.handleClose(SHOW_FORDWARDS)},
-					  {text: PLAYER_GROUP_SUBSTITUTE.toUpperCase(), onClick: () => this.handleClose(SHOW_SUBSTITUTE)}]
-						.map((item, i) => (<MenuItem key={i} {...item}>{item.text}</MenuItem>))}
-				</Menu>
-			</div>);
-	}
+  return (
+    <div>
+      <IconButton
+        aria-owns={open ? 'menu-filters' : null}
+        aria-haspopup='true'
+        onClick={handleMenu}
+        color='inherit'
+      >
+        <MoreVert />
+      </IconButton>
+      <Menu id='menu-filters' anchorEl={anchorEl} open={open} onClose={() => handleClose(null)}>
+        {[
+          { text: 'ALL', onClick: () => handleClose(SHOW_ALL) },
+          { text: PLAYER_GROUP_BACKS.toUpperCase(), onClick: () => handleClose(SHOW_BACKS) },
+          {
+            text: PLAYER_GROUP_FORDWARDS.toUpperCase(),
+            onClick: () => handleClose(SHOW_FORDWARDS),
+          },
+          {
+            text: PLAYER_GROUP_SUBSTITUTE.toUpperCase(),
+            onClick: () => handleClose(SHOW_SUBSTITUTE),
+          },
+        ].map((item, i) => (
+          <MenuItem key={i} {...item}>
+            {item.text}
+          </MenuItem>
+        ))}
+      </Menu>
+    </div>
+  );
 }
 
-export default PlayersFiltersComponent;
+export default compose(inject('PlayersStore'), observer)(PlayersFiltersComponent);

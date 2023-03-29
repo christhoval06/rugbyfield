@@ -3,11 +3,11 @@ import {compose} from 'recompose';
 import PropTypes from "prop-types";
 import classNames from 'classnames';
 import {inject, observer} from 'mobx-react';
-import {withStyles} from '@material-ui/core/styles';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import Close from '@material-ui/icons/Close';
-import ArrowBack from '@material-ui/icons/ArrowBack';
+import {withStyles} from '@mui/styles';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import Close from '@mui/icons-material/Close';
+import ArrowBack from '@mui/icons-material/ArrowBack';
 
 const styles = theme => ({
 	drawerHeader        : {

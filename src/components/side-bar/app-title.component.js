@@ -2,8 +2,8 @@ import React from 'react';
 import {compose} from 'recompose';
 import PropTypes from "prop-types";
 import {inject, observer} from 'mobx-react';
-import {withStyles} from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+import {withStyles} from '@mui/styles';
+import Typography from '@mui/material/Typography';
 
 const styles = {
 	container: {

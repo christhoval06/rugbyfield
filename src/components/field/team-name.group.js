@@ -15,7 +15,7 @@ const TeamNameGroup = ({OptionsStore}) => (
 
 				{...{
 					x     : 535,
-					y     : 175,
+					y     : 30,
 					width : 80,
 					height: 80,
 					fill  : 'white',
@@ -34,8 +34,8 @@ const TeamNameGroup = ({OptionsStore}) => (
 		</Group>
 
 		<Text
-			x={535}
-			y={261}
+			x={620}
+			y={50}
 			fontSize={24}
 			fontFamily='Arial'
 			fontStyle={'bold'}
@@ -44,8 +44,8 @@ const TeamNameGroup = ({OptionsStore}) => (
 			align='center'
 			text={OptionsStore.getTeamNameSplited(0)}/>
 		<Text
-			x={535}
-			y={288}
+			x={620}
+			y={80}
 			fontSize={18}
 			fontFamily='Arial'
 			fill='#fff'

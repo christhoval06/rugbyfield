@@ -1,208 +1,224 @@
-import React, {Component} from 'react';
+import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import {inject, observer} from 'mobx-react';
+import { inject, observer } from 'mobx-react';
+import { compose } from 'recompose';
 import classNames from 'classnames';
-import {withStyles} from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import MoreVert from '@material-ui/icons/MoreVert';
-import Settings from '@material-ui/icons/Settings';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
-import Divider from '@material-ui/core/Divider';
-import Avatar from '@material-ui/core/Avatar';
+import { withStyles } from '@mui/styles';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import MoreVert from '@mui/icons-material/MoreVert';
+import Settings from '@mui/icons-material/Settings';
+import MenuItem from '@mui/material/MenuItem';
+import Menu from '@mui/material/Menu';
+import Divider from '@mui/material/Divider';
+import Avatar from '@mui/material/Avatar';
 
-import {DEFAULT_OPTIONS} from "../constants/options";
-import {DRAWER_WIDTH} from "../configs";
+import { DEFAULT_OPTIONS } from '../constants/options';
+import { DRAWER_WIDTH } from '../configs';
 
-import {withMixpanel} from '../context/MixpanelContext';
+import { withMixpanel } from '../context/MixpanelContext';
+import { useMenu } from '../hooks/MenuProvider';
 
 import AppTitleComponent from './side-bar/app-title.component';
 import CustomizedSnackbar from './customized-snack-bar.component';
 
-const styles = theme => ({
-	appBar             : {
-		position  : 'absolute',
-		width     : `calc(100% - ${DRAWER_WIDTH}px)`,
-		transition: theme.transitions.create(['margin', 'width'], {
-			easing  : theme.transitions.easing.sharp,
-			duration: theme.transitions.duration.leavingScreen,
-		}),
-	},
-	appBarShift        : {
-		transition: theme.transitions.create(['margin', 'width'], {
-			easing  : theme.transitions.easing.easeOut,
-			duration: theme.transitions.duration.enteringScreen,
-		}),
-	},
-	appBarFull         : {
-		width: '100%',
-	},
-	'appBarShift-left' : {
-		width     : `calc(100% - ${DRAWER_WIDTH }px)`,
-		marginLeft: DRAWER_WIDTH,
-	},
-	'appBarShift-right': {
-		width      : `calc(100% - ${DRAWER_WIDTH }px)`,
-		marginRight: DRAWER_WIDTH,
-	},
-	appBarShiftBoot    : {
-		width: `calc(100% - ${DRAWER_WIDTH * 2 }px)`,
-	},
-	row                : {
-		flex          : 1,
-		display       : 'flex',
-		justifyContent: 'left',
-		alignItems    : 'center',
-	},
-	avatar             : {
-		marginRight    : 10,
-		backgroundColor: 'white'
-	},
-	toolbar            : theme.mixins.toolbar,
+const styles = (theme) => ({
+  appBar: {
+    position: 'absolute',
+    width: `calc(100% - ${DRAWER_WIDTH}px)`,
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+  },
+  appBarShift: {
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  appBarFull: {
+    width: '100%',
+  },
+  'appBarShift-left': {
+    width: `calc(100% - ${DRAWER_WIDTH}px)`,
+    marginLeft: DRAWER_WIDTH,
+  },
+  'appBarShift-right': {
+    width: `calc(100% - ${DRAWER_WIDTH}px)`,
+    marginRight: DRAWER_WIDTH,
+  },
+  appBarShiftBoot: {
+    width: `calc(100% - ${DRAWER_WIDTH * 2}px)`,
+  },
+  row: {
+    flex: 1,
+    display: 'flex',
+    justifyContent: 'left',
+    alignItems: 'center',
+  },
+  avatar: {
+    marginRight: 10,
+    backgroundColor: 'white',
+  },
+  toolbar: theme.mixins.toolbar,
 });
 
-@withStyles(styles)
-@withMixpanel
-@inject('AppStore', 'PlayersStore', 'OptionsStore')
-@observer
-class AppBarComponent extends Component {
+function AppBarComponent(props) {
+  const fileField = useRef();
+  const [state, setState] = useState({
+    anchorEl: null,
+    snackBarVariant: 'success',
+    snackBarMessage: false,
+    snackBarOpen: false,
+  });
 
-	static propTypes = {
-		classes     : PropTypes.object,
-		PlayersStore: PropTypes.object,
-		OptionsStore: PropTypes.object,
-		extraMenu   : PropTypes.array,
-		mixpanel    : PropTypes.object
-	};
+  const handleMenu = (event) => {
+    setState((s) => ({ ...s, anchorEl: event.currentTarget }));
+  };
 
-	constructor(props) {
-		super(props);
-		this.state = {
-			anchorEl       : null,
-			snackBarVariant: 'success',
-			snackBarMessage: false,
-			snackBarOpen   : false,
-		};
-	}
+  const handleClose = () => {
+    setState((s) => ({ ...s, anchorEl: null }));
+  };
 
-	handleMenu = event => {
-		this.setState({anchorEl: event.currentTarget});
-	};
+  const handleCloseSnackBar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
 
-	handleClose = () => {
-		this.setState({anchorEl: null});
-	};
+    setState((s) => ({ ...s, snackBarOpen: false }));
+  };
 
-	handleCloseSnackBar = (event, reason) => {
-		if (reason === 'clickaway') {
-			return;
-		}
+  const onChangeFile = (e) => {
+    e.preventDefault();
 
-		this.setState({snackBarOpen: false});
-	};
+    const file = e.target.files[0];
 
-	onChangeFile = e => {
-		e.preventDefault();
+    props.AppStore.load(file)
+      .then((r) => {
+        // this.props.mixpanel.track('Load from File.');
+        setState((s) => ({
+          ...s,
+          snackBarVariant: 'success',
+          snackBarOpen: true,
+          snackBarMessage: 'Loaded!!!',
+        }));
+      })
+      .catch((e) => {
+        // this.props.mixpanel.track('Error to load from File.');
+        setState((s) => ({
+          ...s,
+          snackBarVariant: 'error',
+          snackBarOpen: true,
+          snackBarMessage: 'Error',
+        }));
+      });
+  };
 
-		const file = e.target.files[0];
+  const { AppStore, PlayersStore, OptionsStore, classes } = props;
+  const { anchorEl, snackBarOpen, snackBarVariant, snackBarMessage } = state;
+  const open = Boolean(anchorEl);
 
+  const {menu: extraMenu} = useMenu();
 
-		this.props.AppStore.load(file)
-			.then(r => {
-				this.props.mixpanel.track('Load from File.');
-				this.setState({
-					snackBarVariant: 'success',
-					snackBarOpen   : true,
-					snackBarMessage: 'Loaded!!!'
-				})
-			})
-			.catch(e => {
-				this.props.mixpanel.track('Error to load from File.');
-				this.setState({
-					snackBarVariant: 'error',
-					snackBarOpen   : true,
-					snackBarMessage: 'Error'
-				})
-			});
-	};
+  return (
+    <AppBar
+      color='inherit'
+      position='absolute'
+      className={classNames(classes.appBar, {
+        [classes.appBarFull]: !PlayersStore.havePlayers,
+        [classes.appBarShift]: OptionsStore.rightOpen || OptionsStore.leftOpen,
+        [classes['appBarShift-right']]: OptionsStore.rightOpen,
+        [classes['appBarShift-left']]: OptionsStore.leftOpen,
+        [classes['appBarShiftBoot']]:
+          (OptionsStore.rightOpen && OptionsStore.leftOpen) ||
+          (PlayersStore.havePlayers && OptionsStore.rightOpen),
+      })}
+    >
+      <CustomizedSnackbar
+        open={snackBarOpen}
+        variant={snackBarVariant}
+        message={snackBarMessage}
+        onClose={handleCloseSnackBar}
+      />
 
-	render() {
-		const {AppStore, PlayersStore, OptionsStore, classes, extraMenu} = this.props;
-		const {anchorEl, snackBarOpen, snackBarVariant, snackBarMessage} = this.state;
-		const open = Boolean(anchorEl);
-		return (
-			<AppBar color="inherit" position="absolute"
-					className={classNames(classes.appBar, {
-						[classes.appBarFull]          : !PlayersStore.havePlayers,
-						[classes.appBarShift]         : (OptionsStore.rightOpen || OptionsStore.leftOpen),
-						[classes['appBarShift-right']]: OptionsStore.rightOpen,
-						[classes['appBarShift-left']] : OptionsStore.leftOpen,
-						[classes['appBarShiftBoot']]  : (OptionsStore.rightOpen && OptionsStore.leftOpen) || (PlayersStore.havePlayers && OptionsStore.rightOpen),
-
-					})}>
-
-				<CustomizedSnackbar
-					open={snackBarOpen}
-					variant={snackBarVariant}
-					message={snackBarMessage}
-					onClose={this.handleCloseSnackBar}/>
-
-				<Toolbar>
-					<div className={classes.row}>
-						<Avatar src={DEFAULT_OPTIONS.teamImage} alt="RugbyField"
-								className={classes.avatar}/>
-						{PlayersStore.havePlayers && (
-							<Typography variant="h6" color="inherit" noWrap>Rugby PTY</Typography>)}
-						{!PlayersStore.havePlayers && <AppTitleComponent/>}
-					</div>
-					<div>
-						<input ref={el => this.fileField = el} type="file" hidden
-							   name="file"
-							   onChange={this.onChangeFile}/>
-						<IconButton
-							aria-owns={open ? 'menu-appbar' : null}
-							aria-haspopup="true"
-							onClick={OptionsStore.toggleRightDrawer}
-							color="inherit">
-							<Settings/>
-						</IconButton>
-						<IconButton
-							aria-owns={open ? 'menu-appbar' : null}
-							aria-haspopup="true"
-							onClick={this.handleMenu}
-							color="inherit">
-							<MoreVert/>
-						</IconButton>
-						<Menu
-							id="menu-appbar"
-							anchorEl={anchorEl}
-							open={open}
-							onClose={this.handleClose}>
-							<MenuItem onClick={() => {
-								this.handleClose();
-								AppStore.new();
-							}}>New</MenuItem>
-							<MenuItem onClick={() => {
-								this.handleClose();
-								this.fileField.click()
-							}}>
-								Load from File
-							</MenuItem>
-							<Divider/>
-							{extraMenu && extraMenu.map((item, i) => (
-								<MenuItem key={i} onClick={() => {
-									this.handleClose();
-									item.onClick();
-								}}>{item.text}</MenuItem>))}
-						</Menu>
-					</div>
-				</Toolbar>
-			</AppBar>
-		);
-	}
+      <Toolbar>
+        <div className={classes.row}>
+          <Avatar src={DEFAULT_OPTIONS.teamImage} alt='RugbyField' className={classes.avatar} />
+          {PlayersStore.havePlayers && (
+            <Typography variant='h6' color='inherit' noWrap>
+              Rugby PTY
+            </Typography>
+          )}
+          {!PlayersStore.havePlayers && <AppTitleComponent />}
+        </div>
+        <div>
+          <input ref={fileField} type='file' hidden name='file' onChange={onChangeFile} />
+          <IconButton
+            aria-owns={open ? 'menu-appbar' : null}
+            aria-haspopup='true'
+            onClick={OptionsStore.toggleRightDrawer}
+            color='inherit'
+          >
+            <Settings />
+          </IconButton>
+          <IconButton
+            aria-owns={open ? 'menu-appbar' : null}
+            aria-haspopup='true'
+            onClick={handleMenu}
+            color='inherit'
+          >
+            <MoreVert />
+          </IconButton>
+          <Menu id='menu-appbar' anchorEl={anchorEl} open={open} onClose={handleClose}>
+            <MenuItem
+              onClick={() => {
+                handleClose();
+                AppStore.new();
+              }}
+            >
+              New
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleClose();
+                fileField.current.click();
+              }}
+            >
+              Load from File
+            </MenuItem>
+            {Boolean(extraMenu.length) && <Divider />}
+            {extraMenu &&
+              extraMenu.map((item, i) => (
+                <MenuItem
+                  key={i}
+                  onClick={() => {
+                    handleClose();
+                    item.onClick();
+                  }}
+                >
+                  {item.text}
+                </MenuItem>
+              ))}
+          </Menu>
+        </div>
+      </Toolbar>
+    </AppBar>
+  );
 }
 
-export default AppBarComponent;
+AppBarComponent.propTypes = {
+  classes: PropTypes.object,
+  PlayersStore: PropTypes.object,
+  OptionsStore: PropTypes.object,
+  // mixpanel    : PropTypes.object
+};
+
+export default compose(
+  withStyles(styles),
+  // @withMixpanel
+  inject('AppStore', 'PlayersStore', 'OptionsStore'),
+  observer,
+)(AppBarComponent);

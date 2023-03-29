@@ -1,17 +1,17 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import {withStyles} from '@material-ui/core/styles';
+import {withStyles} from '@mui/styles';
 import Cropper from 'react-cropper';
 import 'cropperjs/dist/cropper.css';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 
-import Refresh from '@material-ui/icons/Refresh';
+import Refresh from '@mui/icons-material/Refresh';
 
 const styles = theme => ({
 	button      : {
@@ -59,46 +59,37 @@ const CROPPER_DEFAULT = {
 	viewMode   : 3
 };
 
-@withStyles(styles)
-class CropperDialog extends Component {
+function CropperDialog(props) {
 
-	static propTypes = {
-		classes   : PropTypes.object,
-		onTryAgain: PropTypes.func.isRequired,
-		onCrop    : PropTypes.func.isRequired,
-		onClose   : PropTypes.func.isRequired,
-		src       : PropTypes.string.isRequired,
-		open      : PropTypes.bool
-	};
+	const cropperRef = React.useRef(null);
+	const [state, setState] = React.useState(() => ({
+		src : props.src,
+		open: props.open
+	}))
 
-	constructor(props) {
-		super(props);
-		this.state = {
+	React.useEffect(() => {
+		setState({
 			src : props.src,
 			open: props.open
-		};
-	}
+		});
+	}, [props.src, props.open]);
 
-	static getDerivedStateFromProps(nextProps, prevState) {
-		const {src, open} = nextProps;
-		return {src, open};
-	}
 
-	onCrop = () => {
-		this.props.onCrop(this.cropper.getCroppedCanvas().toDataURL());
-		this.props.onClose();
+	const onCrop = () => {
+		const cropper = cropperRef.current?.cropper;
+		props.onCrop(cropper.getCroppedCanvas().toDataURL());
+		props.onClose();
 	};
 
-	render() {
-		const {classes, onClose, onTryAgain} = this.props;
-		const {src, open} = this.state;
+		const {classes, onClose, onTryAgain} = props;
+		const {src, open} = state;
 		return (
 			<Dialog
-				disableBackdropClick={true}
+				disableEscapeKeyDown
 				open={open}
 				onClose={onClose}>
-				<DialogTitle className={classes.titleWrapper} disableTypography={true}>
-					<Typography variant="h6" className={classes.titleText}>Drag the image to
+				<DialogTitle className={classes.titleWrapper}>
+					<Typography variant="p" className={classes.titleText}>Drag the image to
 						adjust.</Typography>
 					<Button className={classNames(classes.button, classes.titleButton)}
 							color="secondary"
@@ -109,18 +100,26 @@ class CropperDialog extends Component {
 				</DialogTitle>
 				<DialogContent className={classes.content}>
 					<Cropper
-						ref={el => this.cropper = el}
+						ref={cropperRef}
 						src={src}
 						className={classes.cropper}
 						{...CROPPER_DEFAULT}/>
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={onClose}>Cancel</Button>
-					<Button onClick={this.onCrop} variant="contained" color="primary">Aceptar</Button>
+					<Button onClick={onCrop} variant="contained" color="primary">Aceptar</Button>
 				</DialogActions>
 			</Dialog>
 		);
-	}
 }
 
-export default CropperDialog;
+CropperDialog.propTypes = {
+	classes   : PropTypes.object,
+	onTryAgain: PropTypes.func.isRequired,
+	onCrop    : PropTypes.func.isRequired,
+	onClose   : PropTypes.func.isRequired,
+	src       : PropTypes.string.isRequired,
+	open      : PropTypes.bool
+};
+
+export default withStyles(styles)(CropperDialog);
