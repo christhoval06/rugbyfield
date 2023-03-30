@@ -20,6 +20,7 @@ const styles = (theme) => ({
   bigAvatar: {
     width: 60,
     height: 60,
+    marginRight: theme.spacing(1)
   },
   matched: {
     color: theme.palette.secondary.main,

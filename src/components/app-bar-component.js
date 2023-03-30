@@ -127,7 +127,14 @@ function AppBarComponent(props) {
             {!PlayersStore.havePlayers && <AppTitleComponent />}
           </div>
           <div>
-            <input ref={fileField} type='file' hidden name='file' onChange={onChangeFile} />
+            <input
+              ref={fileField}
+              type='file'
+              hidden
+              name='file'
+              onChange={onChangeFile}
+              accept='application/json,*.json'
+            />
             <IconButton
               aria-owns={open ? 'menu-appbar' : null}
               aria-haspopup='true'

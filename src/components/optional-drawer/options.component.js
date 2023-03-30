@@ -13,6 +13,9 @@ import Select from '@mui/material/Select';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import MenuItem from '@mui/material/MenuItem/MenuItem';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormLabel from '@mui/material/FormLabel';
 
 import { DEFAULT_OPTIONS } from '../../constants/options';
 import { GAME_VARIANTS } from '../../constants/players';
@@ -123,6 +126,17 @@ function OptionsComponent(props) {
     setState((s) => ({ ...s, [name]: event.target.checked }));
   };
 
+  const handleChangeRadio = (event) => {
+    const field = event.target.value;
+    const newState = { [field]: true };
+    if (field === 'showOnlyInitials') {
+      newState.showImages = false;
+    } else {
+      newState.showOnlyInitials = false;
+    }
+    setState((s) => ({ ...s, ...newState }));
+  };
+
   React.useEffect(() => {
     return () => {
       setState({ ...DEFAULT_OPTIONS });
@@ -132,7 +146,6 @@ function OptionsComponent(props) {
 
   const { classes, anchor } = props;
   const {
-    showOnlyInitials,
     showText,
     showImages,
     croppedImage,
@@ -153,7 +166,7 @@ function OptionsComponent(props) {
 
       <form className={classes.form} noValidate autoComplete='off'>
         <div className={classes.formContainer}>
-          <FormControl className={classes.formControl}>
+          <FormControl className={classes.formControl} sx={{ padding: '0px 8px' }}>
             <div className={classNames(classes.flex, classes.row)}>
               <Typography color='secondary'>Background Color</Typography>
             </div>
@@ -166,7 +179,7 @@ function OptionsComponent(props) {
 
           <Divider />
 
-          <FormControl className={classes.formControl}>
+          <FormControl className={classes.formControl} sx={{ padding: '0px 8px' }}>
             <Typography color='secondary'>Team Image</Typography>
             <CropperComponent
               image={croppedImage || teamImage}
@@ -177,7 +190,7 @@ function OptionsComponent(props) {
 
           <Divider />
 
-          <FormControl className={classes.formControl}>
+          <FormControl className={classes.formControl} sx={{ padding: '0px 8px' }}>
             <Typography color='secondary'>Game Variant</Typography>
             <Select
               value={gameVariant}
@@ -199,7 +212,7 @@ function OptionsComponent(props) {
 
           <Divider />
 
-          <FormControl className={classes.formControl}>
+          <FormControl className={classes.formControl} sx={{ padding: '0px 8px' }}>
             <Typography color='secondary'>Team Name</Typography>
             <Input
               type='text'
@@ -211,7 +224,7 @@ function OptionsComponent(props) {
 
           <Divider />
 
-          <FormControl className={classes.formControl}>
+          <FormControl className={classes.formControl} sx={{ padding: '0px 8px' }}>
             <Typography color='secondary'>Player Image Radius</Typography>
             <Input
               type='text'
@@ -223,7 +236,7 @@ function OptionsComponent(props) {
 
           <Divider />
 
-          <FormControl className={classes.formControl}>
+          <FormControl className={classes.formControl} sx={{ padding: '0px 8px' }}>
             <Typography color='secondary'>Player FontSize</Typography>
             <Input
               type='text'
@@ -235,7 +248,7 @@ function OptionsComponent(props) {
 
           <Divider />
 
-          <FormControl className={classes.formControl}>
+          <FormControl className={classes.formControl} sx={{ padding: '0px 8px' }}>
             <Typography color='secondary'>Substitutes Radius</Typography>
             <Input
               type='text'
@@ -247,7 +260,7 @@ function OptionsComponent(props) {
 
           <Divider />
 
-          <FormControl className={classes.formControl}>
+          <FormControl className={classes.formControl} sx={{ padding: '0px 8px' }}>
             <Typography color='secondary'>Substitutes FontSize</Typography>
             <Input
               type='text'
@@ -259,7 +272,7 @@ function OptionsComponent(props) {
 
           <Divider />
 
-          <FormControl className={classes.formControl}>
+          <FormControl className={classes.formControl} sx={{ padding: '0px 8px' }}>
             <Typography color='secondary'>Substitutes FontSize</Typography>
             <Input
               type='text'
@@ -269,7 +282,32 @@ function OptionsComponent(props) {
             />
           </FormControl>
 
+          <Divider />
+
+          <FormControl sx={{ padding: '0px 8px' }}>
+            <FormLabel id='demo-radio-buttons-group-label'>Icon</FormLabel>
+            <RadioGroup
+              aria-labelledby='demo-radio-buttons-group-label'
+              defaultValue='showImages'
+              name='radio-buttons-group'
+              value={showImages ? 'showImages' : 'showOnlyInitials'}
+              onChange={handleChangeRadio}
+            >
+              <FormControlLabel
+                value='showOnlyInitials'
+                control={<Radio color='primary' />}
+                label='Only Initials'
+              />
+              <FormControlLabel
+                value='showImages'
+                control={<Radio color='primary' />}
+                label='Show Images'
+              />
+            </RadioGroup>
+          </FormControl>
+
           <FormControlLabel
+            sx={{ padding: '0px 8px' }}
             className={classes.formControlLabel}
             control={
               <Switch
@@ -280,32 +318,6 @@ function OptionsComponent(props) {
               />
             }
             label='Show Text'
-          />
-
-          <FormControlLabel
-            className={classes.formControlLabel}
-            control={
-              <Switch
-                checked={showImages}
-                onChange={handleChangeBoolean('showImages')}
-                value='showImages'
-                color='primary'
-              />
-            }
-            label='Show Images'
-          />
-
-          <FormControlLabel
-            className={classes.formControlLabel}
-            control={
-              <Switch
-                checked={showOnlyInitials}
-                onChange={handleChangeBoolean('showOnlyInitials')}
-                value='showImages'
-                color='primary'
-              />
-            }
-            label='Only Initials'
           />
         </div>
         <Divider />
