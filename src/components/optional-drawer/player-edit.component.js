@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { inject, observer } from 'mobx-react';
@@ -6,7 +6,6 @@ import { withStyles } from '@mui/styles';
 import Divider from '@mui/material/Divider';
 
 import { DEFAULT_PLAYER } from '../../constants/players';
-import { withMixpanel } from '../../context/MixpanelContext';
 
 import CropperComponent from '../cropper.component';
 import OptionalHeaderComponent from './optional-header.component';

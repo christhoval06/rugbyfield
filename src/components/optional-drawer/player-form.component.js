@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
 import classNames from 'classnames';
@@ -7,13 +7,9 @@ import { withStyles } from '@mui/styles';
 import Divider from '@mui/material/Divider';
 import Fab from '@mui/material/Fab';
 import ArrowForward from '@mui/icons-material/ArrowForward';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
-import Edit from '@mui/icons-material/Edit';
+
+import InputField from '../formFields/InputField';
+import SelectorField from '../formFields/SelectorField';
 
 import {
   DEFAULT_FIELD,
@@ -40,43 +36,12 @@ const styles = (theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  ended: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-  },
-  textField: {
-    width: '100%',
-  },
-  formControl: {
-    margin: theme.spacing.unit,
-  },
-  lengthInputAdornment: {
-    color: '#bbb',
-    fontSize: 14,
-  },
-  InputEditMode: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '5px 24px',
-  },
-  InputEditModeText: {
-    flex: 1,
-    display: 'flex',
-    justifyContent: 'left',
-    alignItems: 'center',
-  },
-  InputEditModeButton: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
 });
 
 function PlayerFormComponent(props) {
   const [state, setState] = React.useState(() => {
     const { PlayersStore } = props;
-    let { name, number, position, image } = DEFAULT_PLAYER;
+    let { name, number, position } = DEFAULT_PLAYER;
 
     if (PlayersStore.editMode) {
       name = PlayersStore.selectedPlayer.name;
@@ -87,31 +52,11 @@ function PlayerFormComponent(props) {
     return {
       name,
       number,
-      position: position || 'default',
+      position: position ?? 'default',
       error: props.error,
-      openPosition: false,
-      nameLength: (name || '').length,
-      numberLength: (number || '').length,
       fromIsValid: false,
-      editName: false,
-      editPosition: false,
-      editNumber: false,
     };
   });
-
-  // componentWillMount() {
-  // 	const {PlayersStore} = this.props;
-  // 	let {name, number, position, image} = DEFAULT_PLAYER;
-  //
-  // 	if (PlayersStore.editMode) {
-  // 		name = PlayersStore.selectedPlayer.name;
-  // 		number = `${PlayersStore.selectedPlayer.number}`;
-  // 		position = PlayersStore.selectedPlayer.position;
-  // 	}
-  //
-  // 	return {error, name, number, position: };
-  //
-  // }
 
   const getPositionValueVariant = (attr) => {
     const { OptionsStore } = props;
@@ -123,12 +68,11 @@ function PlayerFormComponent(props) {
 
   const getPlayerPositionValue = (key, value, find) => {
     const position = PLAYER_POSITIONS.find((p) => p[key] === value);
-    const toFind = position[find];
+    const toFind = position?.[find];
     return getPositionValueVariant(toFind);
   };
 
-  const _getPlayerPosition = (e) => {
-    const position = e.target.value;
+  const _getPlayerPosition = (position) => {
     if (position === PLAYER_SUBSTITUTE) return setState((s) => ({ ...s, position }));
     setState((s) => ({
       ...s,
@@ -156,168 +100,61 @@ function PlayerFormComponent(props) {
     setState((s) => ({
       ...s,
       [name]: event.target.value,
-      [`${name}Length`]: event.target.value.length,
     }));
   };
 
   const { OptionsStore, PlayersStore, classes } = props;
-  const {
-    error,
-    name,
-    number,
-    position,
-    nameLength,
-    numberLength,
-    editName,
-    editPosition,
-    editNumber,
-  } = state;
+  const { error, name, number, position } = state;
 
   const editMode = PlayersStore.editMode;
   return (
     <div className={classes.formContainer}>
+      <Divider />
+
+      <InputField
+        editMode={editMode}
+        error={error}
+        fieldName='name'
+        label='Full Name'
+        helperText='Player Name. Example: C BARBA'
+        onChange={handleChange('name')}
+        defaultValue={name}
+        maxLength={DEFAULT_FIELD.nameMaxLength}
+      />
+
+      <Divider />
+
+      <SelectorField
+        editMode={editMode}
+        error={error}
+        fieldName='position'
+        label='Position'
+        helperText='Player Position. Example: Lock'
+        onChange={_getPlayerPosition}
+        defaultValue={position}
+        defaultOption='Select a position'
+        options={PLAYER_POSITIONS.filter((p) => p.game_variants.includes(OptionsStore.gameVariant))}
+        optionValueResolver={getPositionValueVariant}
+        optionNameResolver={_getPlayerPositionName}
+      />
+
+      <Divider />
+
       {position === PLAYER_SUBSTITUTE && (
-        <FormControl className={classes.formControl} error={error && error.attribute === 'number'}>
-          <Typography color='secondary'>Number</Typography>
-          {editMode && !editNumber && (
-            <div className={classNames(classes.toolbar, classes.InputEditMode)}>
-              <Typography className={classes.InputEditModeText}>{number}</Typography>
-              <IconButton
-                className={classes.InputEditModeButton}
-                onClick={() => setState((s) => ({ ...s, editNumber: true }))}
-              >
-                <Edit />
-              </IconButton>
-            </div>
-          )}
-          {(!editMode || editNumber) && (
-            <div className={classNames(classes.toolbar, classes.textField, classes.ended)}>
-              <TextField
-                className={classes.textField}
-                defaultValue={number}
-                onChange={handleChange('number')}
-                error={error && error.attribute === 'number'}
-                helperText={
-                  error && error.attribute === 'number'
-                    ? error.message
-                    : 'Player Number. Example: 6'
-                }
-                margin='normal'
-                inputProps={{
-                  name: 'name',
-                  maxLength: DEFAULT_FIELD.numberMaxLength,
-                }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment className={classes.lengthInputAdornment} position='end'>
-                      {DEFAULT_FIELD.numberMaxLength - numberLength}
-                    </InputAdornment>
-                  ),
-                }}
-                fullWidth={true}
-              />
-            </div>
-          )}
-        </FormControl>
+        <>
+          <InputField
+            editMode={editMode}
+            error={error}
+            fieldName='number'
+            label='Number'
+            helperText='Player Number. Example: 6'
+            onChange={handleChange('number')}
+            defaultValue={number}
+            maxLength={DEFAULT_FIELD.numberMaxLength}
+          />
+          <Divider />
+        </>
       )}
-
-      <Divider />
-
-      <FormControl
-        className={classes.formControl}
-        error={error && error.attribute === 'name'}
-        required
-      >
-        <Typography color='secondary'>Full Name</Typography>
-        {editMode && !editName && (
-          <div className={classNames(classes.toolbar, classes.InputEditMode)}>
-            <Typography className={classes.InputEditModeText}>{name}</Typography>
-            <IconButton
-              className={classes.InputEditModeButton}
-              onClick={() => setState((s) => ({ ...s, editName: true }))}
-            >
-              <Edit />
-            </IconButton>
-          </div>
-        )}
-        {(!editMode || editName) && (
-          <div className={classNames(classes.toolbar, classes.textField, classes.ended)}>
-            <TextField
-              className={classes.textField}
-              defaultValue={name}
-              error={error && error.attribute === 'name'}
-              helperText={
-                error && error.attribute === 'name'
-                  ? error.message
-                  : 'Player Name. Example: C BARBA'
-              }
-              onChange={handleChange('name')}
-              margin='normal'
-              inputProps={{
-                name: 'name',
-                maxLength: DEFAULT_FIELD.nameMaxLength,
-              }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment className={classes.lengthInputAdornment} position='end'>
-                    {DEFAULT_FIELD.nameMaxLength - nameLength}
-                  </InputAdornment>
-                ),
-              }}
-              fullWidth={true}
-            />
-          </div>
-        )}
-      </FormControl>
-
-      <Divider />
-
-      <FormControl className={classes.formControl} error={error && error.attribute === 'position'}>
-        <Typography color='secondary'>Position</Typography>
-        {editMode && !editPosition && (
-          <div className={classNames(classes.toolbar, classes.InputEditMode)}>
-            <Typography className={classes.InputEditModeText}>
-              {_getPlayerPositionName()}
-            </Typography>
-            <IconButton
-              className={classes.InputEditModeButton}
-              onClick={() => setState((s) => ({ ...s, editPosition: true }))}
-            >
-              <Edit />
-            </IconButton>
-          </div>
-        )}
-        {(!editMode || editPosition) && (
-          <div className={classNames(classes.toolbar, classes.textField, classes.ended)}>
-            <TextField
-              select
-              helperText={
-                error && error.attribute === 'position'
-                  ? error.message
-                  : 'Player Position. Example: Lock'
-              }
-              className={classes.textField}
-              error={error && error.attribute === 'position'}
-              value={position}
-              onChange={_getPlayerPosition}
-              inputProps={{ name: 'position' }}
-            >
-              <MenuItem disabled={true} value='default'>
-                <em>Select a position</em>
-              </MenuItem>
-              {PLAYER_POSITIONS.filter((p) =>
-                p.game_variants.includes(OptionsStore.gameVariant),
-              ).map((p, i) => (
-                <MenuItem key={i} value={p.short}>
-                  {getPositionValueVariant(p.name)}
-                </MenuItem>
-              ))}
-            </TextField>
-          </div>
-        )}
-      </FormControl>
-
-      <Divider />
 
       <div className={classNames(classes.toolbar, classes.centered)}>
         <Fab color='primary' aria-label='add' className={classes.button} onClick={_onSubmit}>

@@ -24,6 +24,9 @@ const styles = (theme) => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
   },
+  contentWithSideBar:{
+    right: DRAWER_WIDTH,
+  },
   'content-left': {
     marginLeft: -DRAWER_WIDTH,
   },
@@ -44,12 +47,13 @@ const styles = (theme) => ({
   },
 });
 
-function ContentComponent({ OptionsStore, classes }) {
+function ContentComponent({ OptionsStore, PlayersStore, classes }) {
   return (
     <main
       className={classNames(classes.content, classes['contentShift-left'], {
         [classes['content-right']]: OptionsStore.rightOpen,
-        [classes.contentShift]: OptionsStore.rightOpen,
+        [classes.contentShift]: PlayersStore.havePlayers || OptionsStore.rightOpen || OptionsStore.leftOpen,
+        [classes['content-left']]: PlayersStore.havePlayers || OptionsStore.leftOpen,
       })}
     >
       <div className={classes.toolbar} />
@@ -62,6 +66,7 @@ function ContentComponent({ OptionsStore, classes }) {
 ContentComponent.propTypes = {
   classes: PropTypes.object,
   OptionsStore: PropTypes.object,
+  PlayersStore: PropTypes.object.isRequired,
 };
 
-export default compose(withStyles(styles), inject('OptionsStore'), observer)(ContentComponent);
+export default compose(withStyles(styles), inject('PlayersStore', 'OptionsStore'), observer)(ContentComponent);

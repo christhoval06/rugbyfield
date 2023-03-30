@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
 import classNames from 'classnames';
@@ -16,8 +16,6 @@ import MenuItem from '@mui/material/MenuItem/MenuItem';
 
 import { DEFAULT_OPTIONS } from '../../constants/options';
 import { GAME_VARIANTS } from '../../constants/players';
-
-import { withMixpanel } from '../../context/MixpanelContext';
 
 import CropperComponent from '../cropper.component';
 import OptionalHeaderComponent from './optional-header.component';

@@ -10,7 +10,6 @@ import { useMenu } from '../../hooks/MenuProvider';
 
 import { CANVA_H, CANVA_W } from '../../constants/field.metrics';
 
-import { withMixpanel } from '../../context/MixpanelContext';
 import BackgroundGroup from './background.group';
 import FieldGroup from './field.group';
 import HeaderGroup from './header.group';

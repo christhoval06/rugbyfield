@@ -1,9 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
 import { withStyles } from '@mui/styles';
 import { compose } from 'recompose';
-import { withMixpanel } from '../context/MixpanelContext';
 
 import SideBarComponent from '../components/side-bar';
 import ContentComponent from '../components/content.component';
@@ -25,21 +24,7 @@ const styles = {
     width: '100%',
   },
 };
-
-// @withMixpanel
 function Main({ PlayersStore, classes }) {
-  // const [extraMenu, setExtraMenu] = useState([]);
-  const content = useRef();
-
-  // componentDidMount() {
-  // 	// this.props.mixpanel.track(`RugbyField started.`);
-  // }
-
-  // const loadField = (extraMenu) => {
-  //   console.log('loadField');
-  //   setExtraMenu(extraMenu);
-  // };
-
   return (
     <div className={classes.app}>
       <div className={classes.appFrame}>
@@ -51,7 +36,7 @@ function Main({ PlayersStore, classes }) {
           <PlayerEditComponent />
         </OptionalDrawer>
 
-        <ContentComponent innerRef={content} />
+        <ContentComponent />
 
         <OptionalDrawer anchor={'right'}>
           <OptionsComponent />
@@ -64,7 +49,6 @@ Main.propTypes = {
   classes: PropTypes.object,
   PlayersStore: PropTypes.object.isRequired,
   OptionsStore: PropTypes.object.isRequired,
-  // mixpanel    : PropTypes.object.isRequired
 };
 
 export default compose(withStyles(styles), inject('PlayersStore', 'OptionsStore'), observer)(Main);

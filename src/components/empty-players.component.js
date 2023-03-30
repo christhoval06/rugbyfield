@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
 import classNames from 'classnames';
 import { compose } from 'recompose';
 import { withStyles } from '@mui/styles';
 import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
 
-import { withMixpanel } from '../context/MixpanelContext';
 import CustomizedSnackbar from './customized-snack-bar.component';
 
 const styles = (theme) => ({
@@ -58,6 +58,7 @@ const styles = (theme) => ({
     lineHeight: '20px',
     display: 'inline-flex',
     alignItems: 'center',
+    marginLeft: 5,
   },
   messageLink: {
     textDecoration: 'none',
@@ -119,8 +120,7 @@ function EmptyPlayersComponent(props) {
   if (PlayersStore.havePlayers) return null;
 
   const { snackBarOpen, snackBarVariant, snackBarMessage } = state;
-
-  console.log({ snackBarOpen, snackBarVariant, snackBarMessage, classes })
+  
   return (
     <div className={classes.container}>
       <CustomizedSnackbar
@@ -141,28 +141,25 @@ function EmptyPlayersComponent(props) {
         </div>
         <div className={classes.otherMessages}>
           <div className={classes.messageSeparator} />
-          <Typography className={classes.messageText}>
-            You can add a player{' '}
-            <a
-              href={'#'}
+          <Typography className={classes.messageText} component='span'>
+            You can add a player&nbsp;
+            <Link
+              underline='none'
+              component='button'
               className={classNames(classes.assertText, classes.messageLink)}
               onClick={OptionsStore.toggleLeftDrawer}
             >
-              {' '}
-              HERE
-            </a>
-          </Typography>
-
-          <Typography className={classes.messageText}>
-            or load
-            <a
-              href={'#'}
+              HERE &nbsp;
+            </Link>
+            or load &nbsp;
+            <Link
+              underline='none'
+              component='button'
               className={classNames(classes.assertText, classes.messageLink)}
               onClick={() => fileField.current.click()}
             >
-              {' '}
               Players From File
-            </a>
+            </Link>
           </Typography>
         </div>
       </div>

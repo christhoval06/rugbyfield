@@ -7,7 +7,8 @@ import RoundedImageComponent from '../rounded-image.component';
 
 const SubstitutesGroup = ({ PlayersStore, OptionsStore }) => {
   const substitutes = PlayersStore.getPlayerSubstitutes();
-//   if (!Boolean(substitutes.length)) return null;
+  
+  if (!Boolean(substitutes.length)) return null;
 
   return (
     <Group>

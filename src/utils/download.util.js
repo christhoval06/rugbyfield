@@ -14,7 +14,6 @@ export const download = (data, strFileName, strMimeType) => {
 	let b;
 	let fr;
 
-	//if(typeof B.bind === 'function' ){ B=B.bind(self); }
 
 	if (String(this) === "true") { //reverse arguments, allowing download.bind(true, "text/xml", "export.xml") to act as a callback
 		x = [x, m];
@@ -23,7 +22,7 @@ export const download = (data, strFileName, strMimeType) => {
 	}
 
 	//go ahead and download dataURLs right away
-	if (String(x).match(/^data:[\w+\-]+\/[\w+\-]+[,;]/)) {
+	if (String(x).match(/^data:[\w+-]+\/[\w+-]+[,;]/)) {
 		return navigator.msSaveBlob ?  // IE10 can't do a[download], only Blobs:
 			   navigator.msSaveBlob(d2b(x), fn) :
 			   saver(x); // everyone else can save dataURLs un-processed
@@ -82,7 +81,7 @@ export const download = (data, strFileName, strMimeType) => {
 		const f = D.createElement("iframe");
 		D.body.appendChild(f);
 		if (!winMode) { // force a mime that will download:
-			url = `data:${url.replace(/^data:([\w\/\-\+]+)/, u)}`;
+			url = `data:${url.replace(/^data:([\w/\-+]+)/, u)}`;
 		}
 
 		f.src = url;

@@ -18,7 +18,6 @@ import Avatar from '@mui/material/Avatar';
 import { DEFAULT_OPTIONS } from '../constants/options';
 import { DRAWER_WIDTH } from '../configs';
 
-import { withMixpanel } from '../context/MixpanelContext';
 import { useMenu } from '../hooks/MenuProvider';
 
 import AppTitleComponent from './side-bar/app-title.component';
