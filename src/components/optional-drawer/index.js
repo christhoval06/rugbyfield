@@ -12,12 +12,7 @@ const styles = (theme) => ({
   drawerPaper: {
     position: 'relative',
     width: DRAWER_WIDTH,
-  },
-  'drawerPaper-left': {
-    position: 'absolute',
-    top: 0,
-    width: DRAWER_WIDTH,
-  },
+  }
 });
 
 function OptionalDrawer(props) {
@@ -26,12 +21,8 @@ function OptionalDrawer(props) {
 
   return (
     <Drawer
-      variant='permanent'
-      classes={{
-        paper: classNames(classes.drawerPaper, {
-          [classes['drawerPaper-left']]: anchor === 'left',
-        }),
-      }}
+      // variant='permanent'
+      classes={{paper: classNames(classes.drawerPaper)}}
       anchor={anchor}
       open={OptionsStore[`${anchor}Open`]}
     >

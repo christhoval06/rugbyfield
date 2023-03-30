@@ -1,7 +1,7 @@
 import React from 'react';
 import { compose } from 'recompose';
 import { inject, observer } from 'mobx-react';
-import { Group, Rect, Image } from 'react-konva';
+import { Group, Rect } from 'react-konva';
 import Konva from 'konva';
 import PropTypes from 'prop-types';
 import useImage from 'use-image';
@@ -69,32 +69,32 @@ const BackGroundImage = ({
   );
 };
 
-const FilterImage = () => {
-  const [image] = useImage(URL, 'Anonimus');
-  const imageRef = React.useRef();
+// const FilterImage = () => {
+//   const [image] = useImage(URL, 'Anonimus');
+//   const imageRef = React.useRef();
 
-  // when image is loaded we need to cache the shape
-  React.useEffect(() => {
-    if (image) {
-      // you many need to reapply cache on some props changes like shadow, stroke, etc.
-      imageRef.current.cache();
-    }
-  }, [image]);
+//   // when image is loaded we need to cache the shape
+//   React.useEffect(() => {
+//     if (image) {
+//       // you many need to reapply cache on some props changes like shadow, stroke, etc.
+//       imageRef.current.cache();
+//     }
+//   }, [image]);
 
-  return (
-    <Image
-      ref={imageRef}
-      x={0}
-      y={0}
-      width={CANVA_W}
-      height={CANVA_H}
-      opacity={0.4}
-      image={image}
-      filters={[Konva.Filters.Blur]}
-      blurRadius={10}
-    />
-  );
-};
+//   return (
+//     <Image
+//       ref={imageRef}
+//       x={0}
+//       y={0}
+//       width={CANVA_W}
+//       height={CANVA_H}
+//       opacity={0.4}
+//       image={image}
+//       filters={[Konva.Filters.Blur]}
+//       blurRadius={10}
+//     />
+//   );
+// };
 
 const BackgroundGroup = ({ OptionsStore: { backgroundColor } }) => (
   <Group>

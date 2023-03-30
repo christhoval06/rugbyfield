@@ -25,32 +25,16 @@ import CustomizedSnackbar from './customized-snack-bar.component';
 
 const styles = (theme) => ({
   appBar: {
-    position: 'absolute',
-    width: `calc(100% - ${DRAWER_WIDTH}px)`,
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
   },
-  appBarShift: {
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
   appBarFull: {
-    width: '100%',
+    width: '100% !important',
   },
-  'appBarShift-left': {
-    width: `calc(100% - ${DRAWER_WIDTH}px)`,
-    marginLeft: DRAWER_WIDTH,
-  },
-  'appBarShift-right': {
-    width: `calc(100% - ${DRAWER_WIDTH}px)`,
-    marginRight: DRAWER_WIDTH,
-  },
-  appBarShiftBoot: {
-    width: `calc(100% - ${DRAWER_WIDTH * 2}px)`,
+  withSideBar: {
+    width: `calc(100% - ${DRAWER_WIDTH}px) !important`,
   },
   row: {
     flex: 1,
@@ -120,91 +104,87 @@ function AppBarComponent(props) {
   const { anchorEl, snackBarOpen, snackBarVariant, snackBarMessage } = state;
   const open = Boolean(anchorEl);
 
-  const {menu: extraMenu} = useMenu();
+  const { menu: extraMenu } = useMenu();
 
   return (
-    <AppBar
-      color='inherit'
-      position='absolute'
-      className={classNames(classes.appBar, {
-        [classes.appBarFull]: !PlayersStore.havePlayers,
-        [classes.appBarShift]: OptionsStore.rightOpen || OptionsStore.leftOpen,
-        [classes['appBarShift-right']]: OptionsStore.rightOpen,
-        [classes['appBarShift-left']]: OptionsStore.leftOpen,
-        [classes['appBarShiftBoot']]:
-          (OptionsStore.rightOpen && OptionsStore.leftOpen) ||
-          (PlayersStore.havePlayers && OptionsStore.rightOpen),
-      })}
-    >
+    <>
+      <AppBar
+        color='inherit'
+        position='fixed'
+        className={classNames(classes.appBar, {
+          [classes.appBarFull]: !PlayersStore.havePlayers,
+          [classes.withSideBar]: PlayersStore.havePlayers,
+        })}
+      >
+        <Toolbar>
+          <div className={classes.row}>
+            <Avatar src={DEFAULT_OPTIONS.teamImage} alt='RugbyField' className={classes.avatar} />
+            {PlayersStore.havePlayers && (
+              <Typography variant='h6' color='inherit' noWrap>
+                Rugby PTY
+              </Typography>
+            )}
+            {!PlayersStore.havePlayers && <AppTitleComponent />}
+          </div>
+          <div>
+            <input ref={fileField} type='file' hidden name='file' onChange={onChangeFile} />
+            <IconButton
+              aria-owns={open ? 'menu-appbar' : null}
+              aria-haspopup='true'
+              onClick={OptionsStore.toggleRightDrawer}
+              color='inherit'
+            >
+              <Settings />
+            </IconButton>
+            <IconButton
+              aria-owns={open ? 'menu-appbar' : null}
+              aria-haspopup='true'
+              onClick={handleMenu}
+              color='inherit'
+            >
+              <MoreVert />
+            </IconButton>
+            <Menu id='menu-appbar' anchorEl={anchorEl} open={open} onClose={handleClose}>
+              <MenuItem
+                onClick={() => {
+                  handleClose();
+                  AppStore.new();
+                }}
+              >
+                New
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  handleClose();
+                  fileField.current.click();
+                }}
+              >
+                Load from File
+              </MenuItem>
+              {Boolean(extraMenu.length) && <Divider />}
+              {extraMenu &&
+                extraMenu.map((item, i) => (
+                  <MenuItem
+                    key={i}
+                    onClick={() => {
+                      handleClose();
+                      item.onClick();
+                    }}
+                  >
+                    {item.text}
+                  </MenuItem>
+                ))}
+            </Menu>
+          </div>
+        </Toolbar>
+      </AppBar>
       <CustomizedSnackbar
         open={snackBarOpen}
         variant={snackBarVariant}
         message={snackBarMessage}
         onClose={handleCloseSnackBar}
       />
-
-      <Toolbar>
-        <div className={classes.row}>
-          <Avatar src={DEFAULT_OPTIONS.teamImage} alt='RugbyField' className={classes.avatar} />
-          {PlayersStore.havePlayers && (
-            <Typography variant='h6' color='inherit' noWrap>
-              Rugby PTY
-            </Typography>
-          )}
-          {!PlayersStore.havePlayers && <AppTitleComponent />}
-        </div>
-        <div>
-          <input ref={fileField} type='file' hidden name='file' onChange={onChangeFile} />
-          <IconButton
-            aria-owns={open ? 'menu-appbar' : null}
-            aria-haspopup='true'
-            onClick={OptionsStore.toggleRightDrawer}
-            color='inherit'
-          >
-            <Settings />
-          </IconButton>
-          <IconButton
-            aria-owns={open ? 'menu-appbar' : null}
-            aria-haspopup='true'
-            onClick={handleMenu}
-            color='inherit'
-          >
-            <MoreVert />
-          </IconButton>
-          <Menu id='menu-appbar' anchorEl={anchorEl} open={open} onClose={handleClose}>
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                AppStore.new();
-              }}
-            >
-              New
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                fileField.current.click();
-              }}
-            >
-              Load from File
-            </MenuItem>
-            {Boolean(extraMenu.length) && <Divider />}
-            {extraMenu &&
-              extraMenu.map((item, i) => (
-                <MenuItem
-                  key={i}
-                  onClick={() => {
-                    handleClose();
-                    item.onClick();
-                  }}
-                >
-                  {item.text}
-                </MenuItem>
-              ))}
-          </Menu>
-        </div>
-      </Toolbar>
-    </AppBar>
+    </>
   );
 }
 

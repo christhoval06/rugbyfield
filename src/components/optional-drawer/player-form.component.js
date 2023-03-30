@@ -22,9 +22,6 @@ import {
 } from '../../constants/players';
 
 const styles = (theme) => ({
-  button: {
-    margin: theme.spacing.unit,
-  },
   formContainer: {
     display: 'flex',
     width: '100%',
@@ -120,6 +117,7 @@ function PlayerFormComponent(props) {
         onChange={handleChange('name')}
         defaultValue={name}
         maxLength={DEFAULT_FIELD.nameMaxLength}
+        required
       />
 
       <Divider />
@@ -151,13 +149,14 @@ function PlayerFormComponent(props) {
             onChange={handleChange('number')}
             defaultValue={number}
             maxLength={DEFAULT_FIELD.numberMaxLength}
+            required
           />
           <Divider />
         </>
       )}
 
       <div className={classNames(classes.toolbar, classes.centered)}>
-        <Fab color='primary' aria-label='add' className={classes.button} onClick={_onSubmit}>
+        <Fab color='primary' aria-label='add or save' onClick={_onSubmit}>
           <ArrowForward />
         </Fab>
       </div>

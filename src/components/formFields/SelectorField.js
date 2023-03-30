@@ -25,7 +25,8 @@ const styles = (theme) => ({
     width: '100%',
   },
   formControl: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing(1),
+    padding: theme.spacing(0, 1),
   },
   lengthInputAdornment: {
     color: '#bbb',
@@ -62,7 +63,7 @@ function SelectorField({
   const fieldValueName = optionNameResolver(defaultValue);
 
   return (
-    <FormControl className={classes.formControl} error={error && error.attribute === 'position'}>
+    <FormControl className={classes.formControl} error={error?.attribute === fieldName} sx={{padding: '0px 8px'}}>
       <Typography color='secondary'>{label}</Typography>
       {editMode && !editable && (
         <NonEditableField value={fieldValueName} onChange={() => setEditable(true)} />
@@ -77,6 +78,7 @@ function SelectorField({
             value={value}
             onChange={_onChange}
             inputProps={{ name: fieldName }}
+            variant="standard" 
           >
             <MenuItem disabled={true} value='default'>
               <em>{defaultOption}</em>

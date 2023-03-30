@@ -38,6 +38,7 @@ function InputField({
   helperText,
   label,
   maxLength,
+  required
 }) {
   const [editable, setEditable] = React.useState(false);
   const [value, setValue] = React.useState(() => defaultValue ?? '');
@@ -54,8 +55,10 @@ function InputField({
   return (
     <FormControl
       className={classes.formControl}
-      error={error && error.attribute === fieldName}
-      required
+      error={error?.attribute === fieldName}
+      required={required}
+      variant='standard'
+      sx={{padding: '0px 8px'}}
     >
       <Typography color='secondary'>{label}</Typography>
       {editMode && !editable && (
@@ -70,6 +73,7 @@ function InputField({
             helperText={error?.attribute === fieldName ? error.message : helperText}
             onChange={_onChange}
             margin='normal'
+            variant="standard" 
             inputProps={{
               name: fieldName,
               maxLength,
@@ -99,6 +103,7 @@ InputField.propTypes = {
   helperText: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   maxLength: PropTypes.number.isRequired,
+  required: PropTypes.bool
 };
 
 export default withStyles(styles)(InputField);

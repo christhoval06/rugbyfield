@@ -6,24 +6,20 @@ import { compose } from 'recompose';
 import { withStyles } from '@mui/styles';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
+import Box from '@mui/material/Box';
 
 import CustomizedSnackbar from './customized-snack-bar.component';
 
 const styles = (theme) => ({
   container: {
-    backgroundColor: '#f7f9fa',
     cursor: 'default',
-    paddingBottom: 28,
-    paddingTop: 28,
-    alignItems: 'center',
     boxSizing: 'border-box',
     flexGrow: 1,
+    alignItems: 'center',
     justifyContent: 'center',
-    position: 'absolute',
     zIndex: 1,
     display: 'flex',
-    height: '100%',
-    width: '100%',
+    height: '100vh'
   },
   wrapper: {
     textAlign: 'center',
@@ -122,7 +118,7 @@ function EmptyPlayersComponent(props) {
   const { snackBarOpen, snackBarVariant, snackBarMessage } = state;
   
   return (
-    <div className={classes.container}>
+    <Box className={classes.container}>
       <CustomizedSnackbar
         open={snackBarOpen}
         variant={snackBarVariant}
@@ -171,7 +167,7 @@ function EmptyPlayersComponent(props) {
         name='file'
         onChange={onChangeFile}
       />
-    </div>
+    </Box>
   );
 }
 

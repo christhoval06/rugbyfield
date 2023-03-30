@@ -4,8 +4,9 @@ import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { Layer, Stage, Text } from 'react-konva';
 import { withStyles } from '@mui/styles';
-import download from '../../utils/download.util';
+import Box from '@mui/material/Box';
 
+import download from '../../utils/download.util';
 import { useMenu } from '../../hooks/MenuProvider';
 
 import { CANVA_H, CANVA_W } from '../../constants/field.metrics';
@@ -17,17 +18,15 @@ import PlayersInFieldGroup from './players-in-field.group';
 import SubstitutesGroup from './substitutes.group';
 import TeamNameGroup from './team-name.group';
 
-const styles = {
+const styles = (theme) => ({
   container: {
-    position: 'absolute',
-    marginTop: 80,
+    marginTop: theme.spacing(6),
     flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
     display: 'flex',
-    width: '100%',
   },
-};
+});
 
 function Field({ PlayersStore, classes, ...props }) {
   const stage = React.useRef();
@@ -52,7 +51,7 @@ function Field({ PlayersStore, classes, ...props }) {
           text: 'Save as Image',
           onClick: () => {
             // this.props.mixpanel.track('Download as Image');
-            download(_stage.getStage().toDataURL(), `rf_${new Date().getTime()}.png`, 'image/png');
+            download(_stage.getStage().toDataURL({pixelRatio: 3}), `rf_${new Date().getTime()}.png`, 'image/png');
           },
         },
         {
@@ -77,37 +76,39 @@ function Field({ PlayersStore, classes, ...props }) {
   if (!PlayersStore.havePlayers) return null;
 
   return (
-    <Stage width={CANVA_W} height={CANVA_H} ref={stage} className={classes.container}>
-      <Layer>
-        <BackgroundGroup />
-        <FieldGroup />
-        <HeaderGroup />
-        <PlayersInFieldGroup />
-        <TeamNameGroup />
-        <SubstitutesGroup />
+    <Box className={classes.container}>
+      <Stage width={CANVA_W} height={CANVA_H} ref={stage}>
+        <Layer>
+          <BackgroundGroup />
+          <FieldGroup />
+          <HeaderGroup />
+          <PlayersInFieldGroup />
+          <TeamNameGroup />
+          <SubstitutesGroup />
 
-        {/*<Rect {...{*/}
-        {/*x           : 535,*/}
-        {/*y           : 720,*/}
-        {/*width       : 250,*/}
-        {/*height      : 60,*/}
-        {/*fill        : 'white',*/}
-        {/*cornerRadius: 10*/}
-        {/*}} />*/}
+          {/*<Rect {...{*/}
+          {/*x           : 535,*/}
+          {/*y           : 720,*/}
+          {/*width       : 250,*/}
+          {/*height      : 60,*/}
+          {/*fill        : 'white',*/}
+          {/*cornerRadius: 10*/}
+          {/*}} />*/}
 
-        <Text
-          x={730}
-          y={780}
-          fontSize={10}
-          fontFamily='Arial'
-          fill='#fff'
-          padding={5}
-          align='right'
-          text='@rugbypty'
-          opacity={0.5}
-        />
-      </Layer>
-    </Stage>
+          <Text
+            x={730}
+            y={780}
+            fontSize={10}
+            fontFamily='Arial'
+            fill='#fff'
+            padding={5}
+            align='right'
+            text='@rugbypty'
+            opacity={0.5}
+          />
+        </Layer>
+      </Stage>
+    </Box>
   );
 }
 
