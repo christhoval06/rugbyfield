@@ -28,7 +28,7 @@ const BackGroundImage = ({
     if (image) {
       // you many need to reapply cache on some props changes like shadow, stroke, etc.
       rectRef.current.cache();
-	//   console.log(rectRef.current.attrs.fillPatternImage);
+      //   console.log(rectRef.current.attrs.fillPatternImage);
     }
   }, [image]);
 
@@ -61,10 +61,10 @@ const BackGroundImage = ({
       cornerRadius={cornerRadius}
       stroke={strokeColor}
       strokeWidth={2}
-	  fillPatternScaleX={scale}
-	  fillPatternScaleY={scale}
-	  fillPatternOffsetX={offsetX}
-	  fillPatternOffsetY={offsetY}
+      fillPatternScaleX={scale}
+      fillPatternScaleY={scale}
+      fillPatternOffsetX={offsetX}
+      fillPatternOffsetY={offsetY}
     />
   );
 };

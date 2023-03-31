@@ -51,7 +51,7 @@ function Field({ PlayersStore, classes, ...props }) {
           text: 'Save as Image',
           onClick: () => {
             // this.props.mixpanel.track('Download as Image');
-            download(_stage.getStage().toDataURL({pixelRatio: 3}), `rf_${new Date().getTime()}.png`, 'image/png');
+            download(_stage.getStage().toDataURL({pixelRatio: 3, quality: 1, imageSmoothingEnabled: false}), `rf_${new Date().getTime()}.png`, 'image/png');
           },
         },
         {
@@ -60,7 +60,7 @@ function Field({ PlayersStore, classes, ...props }) {
             // props.mixpanel.track('Download as File')
             download(
               JSON.stringify(props.AppStore.toJSON()),
-              `rf_${new Date().getTime()}.json`,
+              `rf_${new Date().getTime()}.rbf`,
               'application/json',
             );
           },

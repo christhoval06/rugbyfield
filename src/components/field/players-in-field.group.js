@@ -9,13 +9,13 @@ import PlayerCard from './player-card.group';
 const PlayersInFieldGroup = ({OptionsStore, PlayersStore}) => {
 	if (!PlayersStore.havePlayers) return null;
 
-	return ROWS[OptionsStore.gameVariant].map((r, i) => (
+	return ROWS[OptionsStore.gameVariant].map((row, i) => (
 		<Group key={i}>
 			{
-				r.map((p, i) => {
+				row.map((p) => {
 					const player = PlayersStore.getPlayerWithPosition(p.position);
 					if (!player) return null;
-					return (<PlayerCard key={i} player={player} attr={p}/>)
+					return (<PlayerCard key={`player--card-${player.number}`} player={player} attr={p}/>)
 				})
 			}
 		</Group>

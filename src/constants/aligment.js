@@ -1,21 +1,17 @@
 import Metrics from './field.metrics';
 import {GAME_VARIANT_LEAGUE, GAME_VARIANT_SEVENS, GAME_VARIANT_TEN, GAME_VARIANT_UNION} from './players';
+import {
+	IMAGE_W, IMAGE_H,
+	X, Y,
+	STROKE_WIDTH,
+	PLAYER_SPACE,
+	PLAYER_NAME_SPACE,
+	PLAYER_NAME_SEPARATION,
+	ROW_SEPARATION
+} from './dimens'
 
-const {X: FIELD_X, Y: FIELD_Y, FIELD_W} = Metrics;
-export const IMAGE_W = 70;
-export const IMAGE_H = IMAGE_W;
+const {X: FIELD_X, FIELD_W} = Metrics;
 
-const X = FIELD_X + 50;
-const Y = FIELD_Y - 5;
-
-const  STROKE_WIDTH = 1;
-
-const PLAYER_SPACE = 60;
-
-const PLAYER_NAME_SPACE = 25;
-const PLAYER_NAME_SEPARATION = 5;
-
-const ROW_SEPARATION = 10;
 
 const IMAGE_DEFAULTS = {
 	width       : IMAGE_W,

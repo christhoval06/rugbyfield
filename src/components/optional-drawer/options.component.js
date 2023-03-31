@@ -285,7 +285,7 @@ function OptionsComponent(props) {
           <Divider />
 
           <FormControl sx={{ padding: '0px 8px' }}>
-            <FormLabel id='demo-radio-buttons-group-label'>Icon</FormLabel>
+            <FormLabel id='demo-radio-buttons-group-label'>Avatar</FormLabel>
             <RadioGroup
               aria-labelledby='demo-radio-buttons-group-label'
               defaultValue='showImages'
@@ -296,12 +296,12 @@ function OptionsComponent(props) {
               <FormControlLabel
                 value='showOnlyInitials'
                 control={<Radio color='primary' />}
-                label='Only Initials'
+                label='Initials'
               />
               <FormControlLabel
                 value='showImages'
                 control={<Radio color='primary' />}
-                label='Show Images'
+                label='Images'
               />
             </RadioGroup>
           </FormControl>

@@ -163,7 +163,7 @@ function EmptyPlayersComponent(props) {
         ref={fileField}
         type='file'
         hidden
-        accept='application/json,*.json'
+        accept='application/json,.json,.rbf'
         name='file'
         onChange={onChangeFile}
       />

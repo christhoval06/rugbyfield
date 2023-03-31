@@ -133,7 +133,7 @@ function AppBarComponent(props) {
               hidden
               name='file'
               onChange={onChangeFile}
-              accept='application/json,*.json'
+              accept='application/json,.json,.rbf'
             />
             <IconButton
               aria-owns={open ? 'menu-appbar' : null}
