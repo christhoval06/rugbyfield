@@ -1,6 +1,7 @@
 import React from 'react';
 import { Group, Text, Rect } from 'react-konva';
 import PropTypes from 'prop-types';
+import { observer } from 'mobx-react';
 
 import { IMAGE_H, CARD_STYLE } from '../../constants/dimens';
 import { basic } from '../../constants/colors';
@@ -63,4 +64,4 @@ PlayerInfoStyleCard.propTypes = {
   fontSize: PropTypes.number,
 };
 
-export default PlayerInfoStyleCard;
+export default observer(PlayerInfoStyleCard);

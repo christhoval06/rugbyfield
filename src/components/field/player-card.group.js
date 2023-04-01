@@ -27,18 +27,15 @@ const deactiveSlot = (slot) => {
   slot.moveToBottom();
 };
 
-const PlayerCardGroup = ({ OptionsStore, PlayersStore, player, attr }) => {
-  const { x, y, width, height } = attr.image;
+const useDraggableEditor = () => {
   const groupRef = React.useRef();
   const slotRef = React.useRef();
-
-  const onEdit = () => PlayersStore.editPlayer(player);
 
   React.useEffect(() => {
     const group = groupRef.current;
     const slot = slotRef.current;
-    group.cache();
-    slot.cache();
+    // group.cache();
+    // slot.cache();
 
     return () => {
       group.clearCache();
@@ -64,9 +61,28 @@ const PlayerCardGroup = ({ OptionsStore, PlayersStore, player, attr }) => {
 
   const onDragOver = React.useCallback(() => {}, []);
 
+  return {
+    groupRef,
+    slotRef,
+    onDrag,
+    onDragLeave,
+    onDragEnter,
+    onDragOver,
+    onDrop,
+  };
+};
+
+const PlayerCardGroup = ({ OptionsStore, PlayersStore, player, attr }) => {
+  const { x, y, width, height } = attr.image;
+  const { groupRef, slotRef, onDrag, onDragLeave, onDragEnter, onDragOver, onDrop } =
+    useDraggableEditor();
+
+  const onEdit = () => PlayersStore.editPlayer(player);
+
   return (
     <Group
       name='player-card--container'
+      listening
       onDragOver={onDragOver}
       onDrag={onDrag}
       onDrop={onDrop}
@@ -82,15 +98,10 @@ const PlayerCardGroup = ({ OptionsStore, PlayersStore, player, attr }) => {
         width={CARD_STYLE.CONTAINER_WIDTH}
         height={CARD_STYLE.CONTAINER_HEIGHT}
         stroke={'white'}
-        // opacity={0.4}
+        opacity={0.5}
         strokeWidth={CARD_STYLE.SPACE}
         dash={[5, 2]}
         cornerRadius={CARD_STYLE.RADIUS}
-        // onDragOver={onDragOver}
-        // onDrag={onDrag}
-        // onDrop={onDrop}
-        // onDragEnter={onDragEnter}
-        // onDragLeave={onDragLeave}
         rugbyPositionName={player.getPosition()}
         rugbyPlayer={player}
         rugbyPosition={player.position}
@@ -105,16 +116,13 @@ const PlayerCardGroup = ({ OptionsStore, PlayersStore, player, attr }) => {
         onClick={onEdit}
         onTap={onEdit}
         onDragStart={(event) => {
+          groupRef.current.cache();
           groupRef.current.filters([Konva.Filters.Grayscale]);
         }}
         onDragEnd={(event) => {
+          groupRef.current.clearCache();
           groupRef.current.filters([]);
         }}
-        // onDragOver={onDragOver}
-        // onDrag={onDrag}
-        // onDrop={onDrop}
-        // onDragEnter={onDragEnter}
-        // onDragLeave={onDragLeave}
       >
         {OptionsStore.showImages && (
           <Image

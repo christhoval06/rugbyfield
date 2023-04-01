@@ -1,6 +1,7 @@
 import React from 'react';
 import { Group, Text } from 'react-konva';
 import PropTypes from 'prop-types';
+import { observer } from 'mobx-react';
 
 const PlayerInfoStyleSimple = ({ player, attr, fontSize = 12 }) => {
   const y = attr.image.width;
@@ -26,4 +27,4 @@ PlayerInfoStyleSimple.propTypes = {
   fontSize: PropTypes.number,
 };
 
-export default PlayerInfoStyleSimple;
+export default observer(PlayerInfoStyleSimple);

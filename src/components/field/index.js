@@ -28,12 +28,126 @@ const styles = (theme) => ({
   },
 });
 
-function Field({ PlayersStore, classes, ...props }) {
-  const stageRef = React.useRef();
+const fire = (slot, event, data) => {
+  slot.fire(event, data, true);
+};
+
+const useDraggableEditor = (stageRef) => {
   const layerRef = React.useRef();
   const layerTempRef = React.useRef();
   const startSlotRef = React.useRef();
   const previousSlotRef = React.useRef();
+
+  const onDragStart = React.useCallback((event) => {
+    const shape = event.target;
+    const parent = shape.parent;
+    const slot = parent.findOne('.player-slot');
+    startSlotRef.current = slot;
+    const shapeCloned = shape.clone();
+    shapeCloned.setAttr('name', 'player-card--copy');
+
+    shapeCloned.moveTo(parent);
+    shape.moveTo(layerTempRef.current);
+    slot.fire('drag', { evt: event.evt }, true);
+  }, []);
+
+  const onDragMove = React.useCallback((event) => {
+    const pos = stageRef.current.getPointerPosition();
+    const slot = layerRef.current.getIntersection(pos);
+
+    if ('player-slot' !== slot?.attrs?.name) {
+      if (previousSlotRef.current) {
+        // leave from old targer
+        fire(previousSlotRef.current, 'dragleave', { evt: event.evt });
+        previousSlotRef.current = undefined;
+
+        return;
+      }
+    }
+
+    if (slot._id === startSlotRef.current._id) {
+      return;
+    }
+
+    if (previousSlotRef.current) {
+      if (slot._id === previousSlotRef.current._id) {
+        fire(previousSlotRef.current, 'dragover', { evt: event.evt });
+        return;
+      }
+      // leave from old targer
+      fire(previousSlotRef.current, 'dragleave', { evt: event.evt });
+
+      // enter new targer
+      fire(slot, 'dragenter', { evt: event.evt });
+      previousSlotRef.current = slot;
+      return;
+    }
+
+    if (!previousSlotRef.current) {
+      previousSlotRef.current = slot;
+      fire(slot, 'dragenter', { evt: event.evt });
+      return;
+    }
+  }, [stageRef]);
+
+  const onDragEnd = React.useCallback((event) => {
+    const pos = stageRef.current.getPointerPosition();
+    const slot = layerRef.current.getIntersection(pos);
+    const shape = event.target;
+
+    if ('player-slot' !== slot?.attrs?.name || slot?._id === startSlotRef.current._id) {
+      const parent = startSlotRef.current.parent;
+      const cardCopy = parent.findOne('.player-card--copy');
+      shape.moveTo(parent);
+      shape.to({
+        x: cardCopy.attrs.x,
+        y: cardCopy.attrs.y,
+        duration: 0.1,
+        onFinish: () => {
+          fire(startSlotRef.current, 'drop', { evt: event.evt });
+          cardCopy.destroy();
+          startSlotRef.current = undefined;
+        },
+      });
+      return;
+    }
+
+    const parent = startSlotRef.current.parent;
+
+    const currentParent = slot.parent;
+    const currentPlayer = currentParent.findOne('.player-card');
+    const dropPlayer = parent.findOne('.player-card--copy');
+
+    currentPlayer.moveTo(parent);
+    shape.moveTo(currentParent);
+    shape.to({
+      x: currentPlayer.attrs.x,
+      y: currentPlayer.attrs.y,
+      duration: 0.1,
+      onFinish: () => {
+        fire(slot, 'drop', { evt: event.evt });
+      },
+    });
+    currentPlayer.to({
+      x: dropPlayer.attrs.x,
+      y: dropPlayer.attrs.y,
+      duration: 0.1,
+      onFinish: () => {
+        fire(startSlotRef.current, 'drop', { evt: event.evt });
+        dropPlayer.destroy();
+        startSlotRef.current = undefined;
+      },
+    });
+  }, [stageRef]);
+
+  return { layerRef, layerTempRef, onDragStart, onDragMove, onDragEnd };
+};
+
+function Field({ PlayersStore, classes, ...props }) {
+  const stageRef = React.useRef();
+
+  const { layerRef, layerTempRef, onDragStart, onDragMove, onDragEnd } =
+    useDraggableEditor(stageRef);
 
   const { setMenu } = useMenu();
 
@@ -45,7 +159,6 @@ function Field({ PlayersStore, classes, ...props }) {
       }
 
       const _stage = stageRef.current.getStage();
-
 
       if (!_stage) {
         setMenu([]);
@@ -85,10 +198,6 @@ function Field({ PlayersStore, classes, ...props }) {
     };
   }, [PlayersStore.havePlayers, props.AppStore, setMenu]);
 
-  const fire = React.useCallback((slot, event, data) => {
-    slot.fire(event, data, true);
-  }, []);
-
   if (!PlayersStore.havePlayers) return null;
 
   return (
@@ -97,105 +206,10 @@ function Field({ PlayersStore, classes, ...props }) {
         width={CANVA_W}
         height={CANVA_H}
         ref={stageRef}
-        onDragStart={(event) => {
-          const shape = event.target;
-          const parent = shape.parent;
-          const slot = parent.findOne('.player-slot');
-          startSlotRef.current = slot;
-          const shapeCloned = shape.clone();
-          shapeCloned.setAttr('name', 'player-card--copy');
-
-          shapeCloned.moveTo(parent);
-          shape.moveTo(layerTempRef.current);
-          slot.fire('drag', { evt: event.evt }, true);
-        }}
-        onDragMove={(event) => {
-          const pos = stageRef.current.getPointerPosition();
-          const slot = layerRef.current.getIntersection(pos);
-
-          if ('player-slot' !== slot?.attrs?.name) {
-            if (previousSlotRef.current) {
-              // leave from old targer
-              fire(previousSlotRef.current, 'dragleave', { evt: event.evt });
-              previousSlotRef.current = undefined;
-
-              return;
-            }
-          }
-
-          if (slot._id === startSlotRef.current._id) {
-            return;
-          }
-
-          if (previousSlotRef.current) {
-            if (slot._id === previousSlotRef.current._id) {
-              fire(previousSlotRef.current, 'dragover', { evt: event.evt });
-              return;
-            }
-            // leave from old targer
-            fire(previousSlotRef.current, 'dragleave', { evt: event.evt });
-
-            // enter new targer
-            fire(slot, 'dragenter', { evt: event.evt });
-            previousSlotRef.current = slot;
-            return;
-          }
-
-          if (!previousSlotRef.current) {
-            previousSlotRef.current = slot;
-            fire(slot, 'dragenter', { evt: event.evt });
-            return;
-          }
-        }}
-        onDragEnd={(event) => {
-          const pos = stageRef.current.getPointerPosition();
-          const slot = layerRef.current.getIntersection(pos);
-          const shape = event.target;
-
-          if ('player-slot' !== slot?.attrs?.name || slot?._id === startSlotRef.current._id) {
-            const parent = startSlotRef.current.parent;
-            const cardCopy = parent.findOne('.player-card--copy');
-            shape.moveTo(parent);
-            shape.to({
-              x: cardCopy.attrs.x,
-              y: cardCopy.attrs.y,
-              duration: 0.1,
-              onFinish: () => {
-                fire(startSlotRef.current, 'drop', { evt: event.evt });
-                cardCopy.destroy();
-                startSlotRef.current = undefined;
-              },
-            });
-            return;
-          }
-
-          const parent = startSlotRef.current.parent;
-
-          const currentParent = slot.parent;
-          const currentPlayer = currentParent.findOne('.player-card');
-          const dropPlayer = parent.findOne('.player-card--copy');
-
-          currentPlayer.moveTo(parent);
-          shape.moveTo(currentParent);
-          shape.to({
-            x: currentPlayer.attrs.x,
-            y: currentPlayer.attrs.y,
-            duration: 0.1,
-            onFinish: () => {
-              fire(slot, 'drop', { evt: event.evt });
-            },
-          });
-          currentPlayer.to({
-            x: dropPlayer.attrs.x,
-            y: dropPlayer.attrs.y,
-            duration: 0.1,
-            onFinish: () => {
-              fire(startSlotRef.current, 'drop', { evt: event.evt });
-              dropPlayer.destroy();
-              startSlotRef.current = undefined;
-            },
-          });
-        }}
+        listening
+        onDragStart={onDragStart}
+        onDragMove={onDragMove}
+        onDragEnd={onDragEnd}
       >
         <Layer ref={layerRef}>
           <BackgroundGroup />
