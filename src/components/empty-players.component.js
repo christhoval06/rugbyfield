@@ -8,6 +8,8 @@ import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
 
+import { DEFAULT_OPTIONS } from '../constants/options';
+
 import CustomizedSnackbar from './customized-snack-bar.component';
 
 const styles = (theme) => ({
@@ -19,7 +21,7 @@ const styles = (theme) => ({
     justifyContent: 'center',
     zIndex: 1,
     display: 'flex',
-    height: '100vh'
+    height: '100vh',
   },
   wrapper: {
     textAlign: 'center',
@@ -116,7 +118,7 @@ function EmptyPlayersComponent(props) {
   if (PlayersStore.havePlayers) return null;
 
   const { snackBarOpen, snackBarVariant, snackBarMessage } = state;
-  
+
   return (
     <Box className={classes.container}>
       <CustomizedSnackbar
@@ -126,6 +128,7 @@ function EmptyPlayersComponent(props) {
         onClose={handleCloseSnackBar}
       />
       <div className={classes.wrapper}>
+        <img src={DEFAULT_OPTIONS.teamImage} alt='' />
         <div className={classes.textWrapper}>
           <Typography variant='h6' color='inherit' noWrap className={classes.primaryText}>
             You haven't Players

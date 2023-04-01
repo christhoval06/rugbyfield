@@ -5,16 +5,15 @@ import PropTypes from 'prop-types';
 const PlayerInfoStyleSimple = ({ player, attr, fontSize = 12 }) => {
   const y = attr.image.width;
   return (
-    <Group >
+    <Group name='player-card--info'>
       <Text
         text={`${player.getNumber()}. ${player.name}`}
-
         {...{
           ...attr.text,
           y,
           fontSize,
           x: 0,
-          width: attr.image.width
+          width: attr.image.width,
         }}
       />
     </Group>

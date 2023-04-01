@@ -13,7 +13,7 @@ const NUMBER_FONT = 14;
 const PlayerInfoStyleCard = ({ player, attr, fontSize = 12 }) => {
   const y = IMAGE_H + 1;
   return (
-    <Group y={y}>
+    <Group name="player-card--info" y={y}>
       <Group width={NUMBER_WIDTH}>
         <Rect
           width={NUMBER_WIDTH}

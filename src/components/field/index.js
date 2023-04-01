@@ -29,17 +29,23 @@ const styles = (theme) => ({
 });
 
 function Field({ PlayersStore, classes, ...props }) {
-  const stage = React.useRef();
+  const stageRef = React.useRef();
+  const layerRef = React.useRef();
+  const layerTempRef = React.useRef();
+  const startSlotRef = React.useRef();
+  const previousSlotRef = React.useRef();
+
   const { setMenu } = useMenu();
 
   React.useEffect(() => {
     (function () {
-      if (!PlayersStore.havePlayers || !stage?.current) {
+      if (!PlayersStore.havePlayers || !stageRef?.current) {
         setMenu([]);
         return;
       }
 
-      const _stage = stage.current.getStage();
+      const _stage = stageRef.current.getStage();
+
 
       if (!_stage) {
         setMenu([]);
@@ -51,7 +57,13 @@ function Field({ PlayersStore, classes, ...props }) {
           text: 'Save as Image',
           onClick: () => {
             // this.props.mixpanel.track('Download as Image');
-            download(_stage.getStage().toDataURL({pixelRatio: 3, quality: 1, imageSmoothingEnabled: false}), `rf_${new Date().getTime()}.png`, 'image/png');
+            download(
+              _stage
+                .getStage()
+                .toDataURL({ pixelRatio: 3, quality: 1, imageSmoothingEnabled: false }),
+              `rf_${new Date().getTime()}.png`,
+              'image/png',
+            );
           },
         },
         {
@@ -73,12 +85,119 @@ function Field({ PlayersStore, classes, ...props }) {
     };
   }, [PlayersStore.havePlayers, props.AppStore, setMenu]);
 
+  const fire = React.useCallback((slot, event, data) => {
+    slot.fire(event, data, true);
+  }, []);
+
   if (!PlayersStore.havePlayers) return null;
 
   return (
     <Box className={classes.container}>
-      <Stage width={CANVA_W} height={CANVA_H} ref={stage}>
-        <Layer>
+      <Stage
+        width={CANVA_W}
+        height={CANVA_H}
+        ref={stageRef}
+        onDragStart={(event) => {
+          const shape = event.target;
+          const parent = shape.parent;
+          const slot = parent.findOne('.player-slot');
+          startSlotRef.current = slot;
+          const shapeCloned = shape.clone();
+          shapeCloned.setAttr('name', 'player-card--copy');
+
+          shapeCloned.moveTo(parent);
+          shape.moveTo(layerTempRef.current);
+          slot.fire('drag', { evt: event.evt }, true);
+        }}
+        onDragMove={(event) => {
+          const pos = stageRef.current.getPointerPosition();
+          const slot = layerRef.current.getIntersection(pos);
+
+          if ('player-slot' !== slot?.attrs?.name) {
+            if (previousSlotRef.current) {
+              // leave from old targer
+              fire(previousSlotRef.current, 'dragleave', { evt: event.evt });
+              previousSlotRef.current = undefined;
+
+              return;
+            }
+          }
+
+          if (slot._id === startSlotRef.current._id) {
+            return;
+          }
+
+          if (previousSlotRef.current) {
+            if (slot._id === previousSlotRef.current._id) {
+              fire(previousSlotRef.current, 'dragover', { evt: event.evt });
+              return;
+            }
+            // leave from old targer
+            fire(previousSlotRef.current, 'dragleave', { evt: event.evt });
+
+            // enter new targer
+            fire(slot, 'dragenter', { evt: event.evt });
+            previousSlotRef.current = slot;
+            return;
+          }
+
+          if (!previousSlotRef.current) {
+            previousSlotRef.current = slot;
+            fire(slot, 'dragenter', { evt: event.evt });
+            return;
+          }
+        }}
+        onDragEnd={(event) => {
+          const pos = stageRef.current.getPointerPosition();
+          const slot = layerRef.current.getIntersection(pos);
+          const shape = event.target;
+
+          if ('player-slot' !== slot?.attrs?.name || slot?._id === startSlotRef.current._id) {
+            const parent = startSlotRef.current.parent;
+            const cardCopy = parent.findOne('.player-card--copy');
+            shape.moveTo(parent);
+            shape.to({
+              x: cardCopy.attrs.x,
+              y: cardCopy.attrs.y,
+              duration: 0.1,
+              onFinish: () => {
+                fire(startSlotRef.current, 'drop', { evt: event.evt });
+                cardCopy.destroy();
+                startSlotRef.current = undefined;
+              },
+            });
+            return;
+          }
+
+          const parent = startSlotRef.current.parent;
+
+          const currentParent = slot.parent;
+          const currentPlayer = currentParent.findOne('.player-card');
+          const dropPlayer = parent.findOne('.player-card--copy');
+
+          currentPlayer.moveTo(parent);
+          shape.moveTo(currentParent);
+          shape.to({
+            x: currentPlayer.attrs.x,
+            y: currentPlayer.attrs.y,
+            duration: 0.1,
+            onFinish: () => {
+              fire(slot, 'drop', { evt: event.evt });
+            },
+          });
+          currentPlayer.to({
+            x: dropPlayer.attrs.x,
+            y: dropPlayer.attrs.y,
+            duration: 0.1,
+            onFinish: () => {
+              fire(startSlotRef.current, 'drop', { evt: event.evt });
+              dropPlayer.destroy();
+              startSlotRef.current = undefined;
+            },
+          });
+        }}
+      >
+        <Layer ref={layerRef}>
           <BackgroundGroup />
           <FieldGroup />
           <HeaderGroup />
@@ -107,6 +226,7 @@ function Field({ PlayersStore, classes, ...props }) {
             opacity={0.5}
           />
         </Layer>
+        <Layer ref={layerTempRef} />
       </Stage>
     </Box>
   );

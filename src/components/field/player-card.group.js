@@ -3,35 +3,139 @@ import { compose } from 'recompose';
 import { inject, observer } from 'mobx-react';
 import { Group, Text, Rect, Image } from 'react-konva';
 import PropTypes from 'prop-types';
+import Konva from 'konva';
 
 import { colors } from '../../constants/colors';
+import { CARD_STYLE } from '../../constants/dimens';
 import { choice } from '../../utils/array';
 
 import PlayerInfo from './player-info.group';
 
+const activeSlot = (slot) => {
+  slot.stroke('red');
+  slot.fill('green');
+  slot.opacity(0.5);
+  slot.cache();
+  slot.moveToTop();
+};
+
+const deactiveSlot = (slot) => {
+  slot.stroke('white');
+  slot.fill('transparent');
+  slot.opacity(0.5);
+  slot.cache();
+  slot.moveToBottom();
+};
+
 const PlayerCardGroup = ({ OptionsStore, PlayersStore, player, attr }) => {
   const { x, y, width, height } = attr.image;
-  return (
-    <Group x={x} y={y} onClick={() => PlayersStore.editPlayer(player)}>
-      {OptionsStore.showImages && (
-        <Image
-          width={width}
-          height={height}
-          image={player.getImage()}
-          cornerRadius={[5, 5, 0, 0]}
-        />
-      )}
+  const groupRef = React.useRef();
+  const slotRef = React.useRef();
 
-      {OptionsStore.showOnlyInitials && (
-        <Group>
-          <Rect
-            fill={choice(colors)}
+  const onEdit = () => PlayersStore.editPlayer(player);
+
+  React.useEffect(() => {
+    const group = groupRef.current;
+    const slot = slotRef.current;
+    group.cache();
+    slot.cache();
+
+    return () => {
+      group.clearCache();
+      slot.clearCache();
+    };
+  }, []);
+
+  const onDrag = React.useCallback(() => {
+    activeSlot(slotRef.current);
+  }, []);
+
+  const onDrop = React.useCallback(() => {
+    deactiveSlot(slotRef.current);
+  }, []);
+
+  const onDragLeave = React.useCallback(() => {
+    onDrop();
+  }, [onDrop]);
+
+  const onDragEnter = React.useCallback(() => {
+    onDrag();
+  }, [onDrag]);
+
+  const onDragOver = React.useCallback(() => {}, []);
+
+  return (
+    <Group
+      name='player-card--container'
+      onDragOver={onDragOver}
+      onDrag={onDrag}
+      onDrop={onDrop}
+      onDragEnter={onDragEnter}
+      onDragLeave={onDragLeave}
+    >
+      <Rect
+        name='player-slot'
+        ref={slotRef}
+        listening
+        x={x - CARD_STYLE.CONTAINER_SPACE}
+        y={y - CARD_STYLE.CONTAINER_SPACE}
+        width={CARD_STYLE.CONTAINER_WIDTH}
+        height={CARD_STYLE.CONTAINER_HEIGHT}
+        stroke={'white'}
+        // opacity={0.4}
+        strokeWidth={CARD_STYLE.SPACE}
+        dash={[5, 2]}
+        cornerRadius={CARD_STYLE.RADIUS}
+        // onDragOver={onDragOver}
+        // onDrag={onDrag}
+        // onDrop={onDrop}
+        // onDragEnter={onDragEnter}
+        // onDragLeave={onDragLeave}
+        rugbyPositionName={player.getPosition()}
+        rugbyPlayer={player}
+        rugbyPosition={player.position}
+      />
+
+      <Group
+        name='player-card'
+        ref={groupRef}
+        x={x}
+        y={y}
+        draggable
+        onClick={onEdit}
+        onTap={onEdit}
+        onDragStart={(event) => {
+          groupRef.current.filters([Konva.Filters.Grayscale]);
+        }}
+        onDragEnd={(event) => {
+          groupRef.current.filters([]);
+        }}
+        // onDragOver={onDragOver}
+        // onDrag={onDrag}
+        // onDrop={onDrop}
+        // onDragEnter={onDragEnter}
+        // onDragLeave={onDragLeave}
+      >
+        {OptionsStore.showImages && (
+          <Image
+            name='player-card--avatar'
             width={width}
             height={height}
+            image={player.getImage()}
             cornerRadius={[5, 5, 0, 0]}
-            opacity={0.75}
           />
-          {/* <Circle
+        )}
+
+        {OptionsStore.showOnlyInitials && (
+          <Group name='player-card--initials'>
+            <Rect
+              fill={choice(colors)}
+              width={width}
+              height={height}
+              cornerRadius={[5, 5, 0, 0]}
+              opacity={0.75}
+            />
+            {/* <Circle
             {...{
               x: x + 35,
               y: y + 35,
@@ -40,20 +144,21 @@ const PlayerCardGroup = ({ OptionsStore, PlayersStore, player, attr }) => {
               fill: 'red',
             }}
           /> */}
-          <Text
-            text={player.initials}
-            fill='#fff'
-            width={width}
-            height={height}
-            fontSize={30}
-            align='center'
-            verticalAlign='middle'
-            fontStyle='bold'
-          />
-        </Group>
-      )}
+            <Text
+              text={player.initials}
+              fill='#fff'
+              width={width}
+              height={height}
+              fontSize={30}
+              align='center'
+              verticalAlign='middle'
+              fontStyle='bold'
+            />
+          </Group>
+        )}
 
-      <PlayerInfo player={player} attr={attr} template='simple' />
+        <PlayerInfo player={player} attr={attr} template='simple' />
+      </Group>
     </Group>
   );
 };
