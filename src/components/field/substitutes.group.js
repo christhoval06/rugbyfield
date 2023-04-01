@@ -1,13 +1,15 @@
 import React from 'react';
 import { compose } from 'recompose';
 import { inject, observer } from 'mobx-react';
-import { Group, Rect, Text } from 'react-konva';
+import { Group, Rect, Text, Image } from 'react-konva';
 import PropTypes from 'prop-types';
-import RoundedImageComponent from '../rounded-image.component';
+
+import { choice } from '../../utils/array';
+import { colors } from '../../constants/colors';
 
 const SubstitutesGroup = ({ PlayersStore, OptionsStore }) => {
   const substitutes = PlayersStore.getPlayerSubstitutes();
-  
+
   if (!Boolean(substitutes.length)) return null;
 
   return (
@@ -47,36 +49,74 @@ const SubstitutesGroup = ({ PlayersStore, OptionsStore }) => {
           }}
         />
 
-        {PlayersStore.getPlayerSubstitutes().map((p, i) => {
-          const x = 545;
-          const y = 270 + 25 * i + 5 * i;
-          return (
-            <Group key={p.id} onClick={() => PlayersStore.editPlayer(p)}>
-              {false && (
-                <RoundedImageComponent
-                  image={p.getImage()}
-                  {...{
-                    x,
-                    y,
-                    width: 25,
-                    height: 25,
-                    stroke: '#FFF',
-                    strokeWidth: 2,
-                    cornerRadius: OptionsStore.imageSubstitutesRadius,
-                  }}
-                />
-              )}
+        {PlayersStore.getPlayerSubstitutes().map((player, i) => {
+          const x = 535;
+          const y = 280 + 35 * i + 10 * i;
 
-              <Text
-                x={x + 5}
-                y={y + 5}
-                fontSize={OptionsStore.SubstitutesFontSize}
-                fontFamily='Arial'
-                fill='#fff'
-                padding={5}
-                align='center'
-                text={`${p.getNumber()}. ${p.name}`}
+          return (
+            <Group
+              key={player.id}
+              onClick={() => PlayersStore.editPlayer(player)}
+              onTap={() => PlayersStore.editPlayer(player)}
+            >
+              <Rect
+                name='player-slot'
+                x={x - 5}
+                y={y - 5}
+                width={230}
+                height={35}
+                stroke={'white'}
+                opacity={0.5}
+                strokeWidth={1}
+                dash={[5, 2]}
+                cornerRadius={8}
               />
+              <Group x={x} y={y}>
+                {false && (
+                  <Image
+                    image={player.getImage()}
+                    width={25}
+                    height={25}
+                    stroke='white'
+                    strokeWidth={2}
+                    cornerRadius={OptionsStore.imageSubstitutesRadius}
+                  />
+                )}
+                <Group name='player-card--initials'>
+                  <Rect
+                    fill={choice(colors)}
+                    width={25}
+                    height={25}
+                    cornerRadius={25}
+                    opacity={0.75}
+                    stroke='white'
+                    strokeWidth={2}
+                  />
+
+                  <Text
+                    text={player.initials}
+                    fill='#fff'
+                    width={25}
+                    height={25}
+                    fontSize={12}
+                    align='center'
+                    verticalAlign='middle'
+                    fontStyle='bold'
+                  />
+                </Group>
+
+                <Text
+                  x={30}
+                  y={0}
+                  fontSize={OptionsStore.SubstitutesFontSize}
+                  fontFamily='Arial'
+                  fontStyle='bold'
+                  fill='white'
+                  padding={5}
+                  align='center'
+                  text={`${player.getNumber()}. ${player.name}`}
+                />
+              </Group>
             </Group>
           );
         })}

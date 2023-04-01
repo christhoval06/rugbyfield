@@ -5,9 +5,9 @@ import { Group, Text, Rect, Image } from 'react-konva';
 import PropTypes from 'prop-types';
 import Konva from 'konva';
 
-import { colors } from '../../constants/colors';
 import { CARD_STYLE } from '../../constants/dimens';
 import { choice } from '../../utils/array';
+import { colors } from '../../constants/colors';
 
 import PlayerInfo from './player-info.group';
 
@@ -88,6 +88,10 @@ const PlayerCardGroup = ({ OptionsStore, PlayersStore, player, attr }) => {
       onDrop={onDrop}
       onDragEnter={onDragEnter}
       onDragLeave={onDragLeave}
+      onClick={onEdit}
+      onTap={onEdit}
+      // onMouseOver={onDragEnter}
+      // onMouseLeave={onDragLeave}
     >
       <Rect
         name='player-slot'
@@ -102,9 +106,6 @@ const PlayerCardGroup = ({ OptionsStore, PlayersStore, player, attr }) => {
         strokeWidth={CARD_STYLE.SPACE}
         dash={[5, 2]}
         cornerRadius={CARD_STYLE.RADIUS}
-        rugbyPositionName={player.getPosition()}
-        rugbyPlayer={player}
-        rugbyPosition={player.position}
       />
 
       <Group
@@ -113,8 +114,6 @@ const PlayerCardGroup = ({ OptionsStore, PlayersStore, player, attr }) => {
         x={x}
         y={y}
         draggable
-        onClick={onEdit}
-        onTap={onEdit}
         onDragStart={(event) => {
           groupRef.current.cache();
           groupRef.current.filters([Konva.Filters.Grayscale]);

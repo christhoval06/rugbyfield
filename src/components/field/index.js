@@ -143,6 +143,7 @@ const useDraggableEditor = (stageRef) => {
   return { layerRef, layerTempRef, onDragStart, onDragMove, onDragEnd };
 };
 
+// ToDo: implementar swap player function
 function Field({ PlayersStore, classes, ...props }) {
   const stageRef = React.useRef();
 
