@@ -1,6 +1,6 @@
 import {applySnapshot, getRoot, types} from 'mobx-state-tree';
 
-import {GAME_SUBSTITUTES_START, PLAYER_POSITIONS, PLAYER_SUBSTITUTE} from '../constants/players';
+import {PLAYER_POSITIONS, PLAYER_SUBSTITUTE} from '../constants/players';
 
 const Player = types
 	.model({

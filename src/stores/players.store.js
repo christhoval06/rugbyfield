@@ -1,7 +1,6 @@
 import {destroy, getRoot, types} from 'mobx-state-tree';
 
 import {
-	GAME_SUBSTITUTES,
 	PLAYER_SUBSTITUTE,
 	POSITION_IN_GROUP_BACKS,
 	POSITION_IN_GROUP_FORDWARDS,
