@@ -7,75 +7,17 @@ import Konva from 'konva';
 
 import { CARD_STYLE } from '../../constants/dimens';
 import { choice } from '../../utils/array';
-import { colors } from '../../constants/colors';
+import { colors, basic } from '../../constants/colors';
+
+import { useDraggable } from './useDraggable';
 
 import PlayerInfo from './player-info.group';
 
-const activeSlot = (slot) => {
-  slot.stroke('red');
-  slot.fill('green');
-  slot.opacity(0.5);
-  slot.cache();
-  slot.moveToTop();
-};
-
-const deactiveSlot = (slot) => {
-  slot.stroke('white');
-  slot.fill('transparent');
-  slot.opacity(0.5);
-  slot.cache();
-  slot.moveToBottom();
-};
-
-const useDraggableEditor = () => {
-  const groupRef = React.useRef();
-  const slotRef = React.useRef();
-
-  React.useEffect(() => {
-    const group = groupRef.current;
-    const slot = slotRef.current;
-    // group.cache();
-    // slot.cache();
-
-    return () => {
-      group.clearCache();
-      slot.clearCache();
-    };
-  }, []);
-
-  const onDrag = React.useCallback(() => {
-    activeSlot(slotRef.current);
-  }, []);
-
-  const onDrop = React.useCallback(() => {
-    deactiveSlot(slotRef.current);
-  }, []);
-
-  const onDragLeave = React.useCallback(() => {
-    onDrop();
-  }, [onDrop]);
-
-  const onDragEnter = React.useCallback(() => {
-    onDrag();
-  }, [onDrag]);
-
-  const onDragOver = React.useCallback(() => {}, []);
-
-  return {
-    groupRef,
-    slotRef,
-    onDrag,
-    onDragLeave,
-    onDragEnter,
-    onDragOver,
-    onDrop,
-  };
-};
 
 const PlayerCardGroup = ({ OptionsStore, PlayersStore, player, attr }) => {
   const { x, y, width, height } = attr.image;
   const { groupRef, slotRef, onDrag, onDragLeave, onDragEnter, onDragOver, onDrop } =
-    useDraggableEditor();
+  useDraggable();
 
   const onEdit = () => PlayersStore.editPlayer(player);
 
@@ -90,18 +32,17 @@ const PlayerCardGroup = ({ OptionsStore, PlayersStore, player, attr }) => {
       onDragLeave={onDragLeave}
       onClick={onEdit}
       onTap={onEdit}
-      // onMouseOver={onDragEnter}
-      // onMouseLeave={onDragLeave}
     >
       <Rect
         name='player-slot'
         ref={slotRef}
         listening
+        visible={false}
         x={x - CARD_STYLE.CONTAINER_SPACE}
         y={y - CARD_STYLE.CONTAINER_SPACE}
         width={CARD_STYLE.CONTAINER_WIDTH}
         height={CARD_STYLE.CONTAINER_HEIGHT}
-        stroke={'white'}
+        stroke={basic.basic100}
         opacity={0.5}
         strokeWidth={CARD_STYLE.SPACE}
         dash={[5, 2]}
@@ -116,7 +57,7 @@ const PlayerCardGroup = ({ OptionsStore, PlayersStore, player, attr }) => {
         draggable
         onDragStart={(event) => {
           groupRef.current.cache();
-          groupRef.current.filters([Konva.Filters.Grayscale]);
+          groupRef.current.filters([Konva.Filters.Sepia]);
         }}
         onDragEnd={(event) => {
           groupRef.current.clearCache();
@@ -135,25 +76,10 @@ const PlayerCardGroup = ({ OptionsStore, PlayersStore, player, attr }) => {
 
         {OptionsStore.showOnlyInitials && (
           <Group name='player-card--initials'>
-            <Rect
-              fill={choice(colors)}
-              width={width}
-              height={height}
-              cornerRadius={[5, 5, 0, 0]}
-              opacity={0.75}
-            />
-            {/* <Circle
-            {...{
-              x: x + 35,
-              y: y + 35,
-              ...rest,
-              radius: 40,
-              fill: 'red',
-            }}
-          /> */}
+            <Rect fill={choice(colors)} width={width} height={height} cornerRadius={[5, 5, 0, 0]} />
             <Text
               text={player.initials}
-              fill='#fff'
+              fill={basic.basic100}
               width={width}
               height={height}
               fontSize={30}
@@ -164,7 +90,7 @@ const PlayerCardGroup = ({ OptionsStore, PlayersStore, player, attr }) => {
           </Group>
         )}
 
-        <PlayerInfo player={player} attr={attr} template='simple' />
+        <PlayerInfo player={player} attr={attr} template='card' />
       </Group>
     </Group>
   );

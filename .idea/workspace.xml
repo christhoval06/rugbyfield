@@ -2,10 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8f8d4fc4-5979-4b1e-9d15-02f0494e19bb" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/field/background.group.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/field/background.group.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/field/header.group.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/field/header.group.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/field/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/field/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/field/player-card.group.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/field/player-card.group.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/field/substitutes.group.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/field/substitutes.group.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/field/team-name.group.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/field/team-name.group.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/constants/title.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/title.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -344,6 +349,8 @@
       <workItem from="1597636023192" duration="3603000" />
       <workItem from="1679923999171" duration="367000" />
       <workItem from="1679924390257" duration="54000" />
+      <workItem from="1680900001818" duration="6000" />
+      <workItem from="1681221402720" duration="36000" />
     </task>
     <servers />
   </component>

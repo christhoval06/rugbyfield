@@ -12,27 +12,27 @@ const TITLE_DEFAULTS = {
 	*/
 };
 export const TITLE_TEXT = [{
-	x        : 61,
-	y        : 35,
+	x        : 20,
+	y        : 15,
 	fontSize : 64,
 	fontStyle: 'bold',
 	text     : 'TEAM',
 	...TITLE_DEFAULTS
 }, {
-	x       : 276,
-	y       : 49,
+	x       : 221,
+	y       : 25,
 	fontSize: 14,
 	text    : 'OF',
 	...TITLE_DEFAULTS
 }, {
-	x       : 267,
-	y       : 72,
+	x       : 218,
+	y       : 45,
 	fontSize: 14,
 	text    : 'THE',
 	...TITLE_DEFAULTS
 }, {
-	x        : 330,
-	y        : 36,
+	x        : 260,
+	y        : 15,
 	fontSize : 64,
 	fontStyle: 'bold',
 	text     : 'DAY',

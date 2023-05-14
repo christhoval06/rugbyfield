@@ -42,23 +42,25 @@ const Player = types
 	}))
 	.views(self => ({
 		getNumber() {
-			const {OptionsStore} = getRoot(self);
-			const gameVariant = OptionsStore.gameVariant;
-			const position = self.variantPosition();
-			let number = 0;
-			if (self.getPosition() === PLAYER_SUBSTITUTE) {
-				number = self.number - GAME_SUBSTITUTES_START[gameVariant];
-				if (number < 0) {
-					number = Math.abs(number)
-				} else if (number < 0) {
-					number = Math.abs(number)
-				}
-				number += GAME_SUBSTITUTES_START[gameVariant];
-			}
-			if (typeof position.number === 'object') {
-				return number + position.number[gameVariant];
-			}
-			return number + position.number;
+			return self.number;
+
+			// const {OptionsStore} = getRoot(self);
+			// const gameVariant = OptionsStore.gameVariant;
+			// const position = self.variantPosition();
+			// let number = 0;
+			// if (self.getPosition() === PLAYER_SUBSTITUTE) {
+			// 	number = self.number - GAME_SUBSTITUTES_START[gameVariant];
+			// 	if (number < 0) {
+			// 		number = Math.abs(number)
+			// 	} else if (number < 0) {
+			// 		number = Math.abs(number)
+			// 	}
+			// 	number += GAME_SUBSTITUTES_START[gameVariant];
+			// }
+			// if (typeof position.number === 'object') {
+			// 	return number + position.number[gameVariant];
+			// }
+			// return number + position.number;
 		},
 		getPosition() {
 			const {OptionsStore} = getRoot(self);
@@ -77,7 +79,11 @@ const Player = types
 		get initials() {
 			const [first, last] = self.name.split(' ');
 			return `${first.substr(0, 1)}${last.substr(0, 1)}`
-		}
+		},
+		getLastName() {
+			const [, last] = self.name.split(' ');
+			return last;
+		},
 	}));
 
 export default Player;

@@ -44,7 +44,7 @@ const PlayerInfoStyleCard = ({ player, attr, fontSize = 12 }) => {
           opacity={CARD_STYLE.OPACITY}
         />
         <Text
-          text={player.name}
+          text={player.getLastName()}
           width={NAME_WIDTH}
           height={CARD_STYLE.HEIGHT}
           fontSize={fontSize}

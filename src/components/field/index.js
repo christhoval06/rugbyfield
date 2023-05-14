@@ -95,6 +95,8 @@ const useDraggableEditor = (stageRef) => {
     const slot = layerRef.current.getIntersection(pos);
     const shape = event.target;
 
+    const isSubstitute = shape.getAttr('isSubstitute')
+    console.log({isSubstitute});
     if ('player-slot' !== slot?.attrs?.name || slot?._id === startSlotRef.current._id) {
       const parent = startSlotRef.current.parent;
       const cardCopy = parent.findOne('.player-card--copy');
@@ -111,6 +113,7 @@ const useDraggableEditor = (stageRef) => {
       });
       return;
     }
+
 
     const parent = startSlotRef.current.parent;
 

@@ -74,7 +74,7 @@ function PlayerFormComponent(props) {
     setState((s) => ({
       ...s,
       position,
-      number: getPlayerPositionValue('short', position, 'number'),
+      // number: getPlayerPositionValue('short', position, 'number'),
     }));
   };
 
@@ -138,7 +138,7 @@ function PlayerFormComponent(props) {
 
       <Divider />
 
-      {position === PLAYER_SUBSTITUTE && (
+      {(position === PLAYER_SUBSTITUTE || true) && (
         <>
           <InputField
             editMode={editMode}

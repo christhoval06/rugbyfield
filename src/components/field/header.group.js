@@ -2,21 +2,15 @@ import React from 'react';
 import { Group, Rect, Text } from 'react-konva';
 import { TITLE_TEXT } from '../../constants/title';
 
+const width = 420;
+const height = 100;
+
 const HeaderGroup = () => (
-  <Group>
+  <Group x={58} y={23} width={width} height={height}>
     {TITLE_TEXT.map((t, i) => (
-      <Text {...t} key={i} />
+      <Text {...t} key={t.text} />
     ))}
-    <Rect
-      {...{
-        x: 58,
-        y: 23,
-        width: 420,
-        height: 100,
-        stroke: 'white',
-        strokeWidth: 1.5,
-      }}
-    />
+    <Rect width={width} height={height} stroke='white' strokeWidth={1.5} />
   </Group>
 );
 

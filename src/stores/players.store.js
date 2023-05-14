@@ -88,12 +88,12 @@ const PlayersStore = types
 			return self.players.find(p => p.position === position)
 		},
 		getPlayerSubstitutes() {
-			const {OptionsStore} = getRoot(self);
-			const gameVariant = OptionsStore.gameVariant;
-			const count = GAME_SUBSTITUTES[gameVariant];
+			// const {OptionsStore} = getRoot(self);
+			// const gameVariant = OptionsStore.gameVariant;
+			// const count = GAME_SUBSTITUTES[gameVariant];
 			return self.players
 				.filter(p => p.variantPosition().short === PLAYER_SUBSTITUTE)
-				.slice(0, count)
+				// .slice(0, count)
 				.sort((a, b) => a.getNumber() - b.getNumber());
 		}
 	}));
