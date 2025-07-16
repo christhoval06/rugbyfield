@@ -6,23 +6,22 @@ import red from '@mui/material/colors/red';
 import CssBaseline from '@mui/material/CssBaseline';
 import GlobalStyles from '@mui/material/GlobalStyles';
 
-
 const styles = {
-	'html, body, #app': {
-	width: `100%`,
-	height: `100%`,
-	margin: 0,
-	padding: 0,
-	overflowY: 'hidden',
+  'html, body, #app': {
+    width: `100%`,
+    height: `100%`,
+    margin: 0,
+    padding: 0,
+    overflowY: 'hidden',
   },
 
   body: {
-	// backgroundColor: '#dfdfdf',
+    // backgroundColor: '#dfdfdf',
   },
 
   ':focus': {
-	outline: 'none !important',
-  }
+    outline: 'none !important',
+  },
 };
 
 // A theme with custom primary and secondary color.
@@ -56,7 +55,7 @@ function withRoot(Component) {
     // thanks to React context.
     return (
       <ThemeProvider theme={theme}>
-		<GlobalStyles styles={styles} />
+        <GlobalStyles styles={styles} />
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline enableColorScheme />
         <Component {...props} />

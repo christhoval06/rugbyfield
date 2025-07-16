@@ -51,97 +51,102 @@ const useDraggableEditor = (stageRef) => {
     slot.fire('drag', { evt: event.evt }, true);
   }, []);
 
-  const onDragMove = React.useCallback((event) => {
-    const pos = stageRef.current.getPointerPosition();
-    const slot = layerRef.current.getIntersection(pos);
+  const onDragMove = React.useCallback(
+    (event) => {
+      const pos = stageRef.current.getPointerPosition();
+      const slot = layerRef.current.getIntersection(pos);
 
-    if ('player-slot' !== slot?.attrs?.name) {
+      if ('player-slot' !== slot?.attrs?.name) {
+        if (previousSlotRef.current) {
+          // leave from old targer
+          fire(previousSlotRef.current, 'dragleave', { evt: event.evt });
+          previousSlotRef.current = undefined;
+
+          return;
+        }
+      }
+
+      if (slot._id === startSlotRef.current._id) {
+        return;
+      }
+
       if (previousSlotRef.current) {
+        if (slot._id === previousSlotRef.current._id) {
+          fire(previousSlotRef.current, 'dragover', { evt: event.evt });
+          return;
+        }
         // leave from old targer
         fire(previousSlotRef.current, 'dragleave', { evt: event.evt });
-        previousSlotRef.current = undefined;
 
+        // enter new targer
+        fire(slot, 'dragenter', { evt: event.evt });
+        previousSlotRef.current = slot;
         return;
       }
-    }
 
-    if (slot._id === startSlotRef.current._id) {
-      return;
-    }
-
-    if (previousSlotRef.current) {
-      if (slot._id === previousSlotRef.current._id) {
-        fire(previousSlotRef.current, 'dragover', { evt: event.evt });
+      if (!previousSlotRef.current) {
+        previousSlotRef.current = slot;
+        fire(slot, 'dragenter', { evt: event.evt });
         return;
       }
-      // leave from old targer
-      fire(previousSlotRef.current, 'dragleave', { evt: event.evt });
+    },
+    [stageRef],
+  );
 
-      // enter new targer
-      fire(slot, 'dragenter', { evt: event.evt });
-      previousSlotRef.current = slot;
-      return;
-    }
+  const onDragEnd = React.useCallback(
+    (event) => {
+      const pos = stageRef.current.getPointerPosition();
+      const slot = layerRef.current.getIntersection(pos);
+      const shape = event.target;
 
-    if (!previousSlotRef.current) {
-      previousSlotRef.current = slot;
-      fire(slot, 'dragenter', { evt: event.evt });
-      return;
-    }
-  }, [stageRef]);
+      const isSubstitute = shape.getAttr('isSubstitute');
+      console.log({ isSubstitute });
+      if ('player-slot' !== slot?.attrs?.name || slot?._id === startSlotRef.current._id) {
+        const parent = startSlotRef.current.parent;
+        const cardCopy = parent.findOne('.player-card--copy');
+        shape.moveTo(parent);
+        shape.to({
+          x: cardCopy.attrs.x,
+          y: cardCopy.attrs.y,
+          duration: 0.1,
+          onFinish: () => {
+            fire(startSlotRef.current, 'drop', { evt: event.evt });
+            cardCopy.destroy();
+            startSlotRef.current = undefined;
+          },
+        });
+        return;
+      }
 
-  const onDragEnd = React.useCallback((event) => {
-    const pos = stageRef.current.getPointerPosition();
-    const slot = layerRef.current.getIntersection(pos);
-    const shape = event.target;
-
-    const isSubstitute = shape.getAttr('isSubstitute')
-    console.log({isSubstitute});
-    if ('player-slot' !== slot?.attrs?.name || slot?._id === startSlotRef.current._id) {
       const parent = startSlotRef.current.parent;
-      const cardCopy = parent.findOne('.player-card--copy');
-      shape.moveTo(parent);
+
+      const currentParent = slot.parent;
+      const currentPlayer = currentParent.findOne('.player-card');
+      const dropPlayer = parent.findOne('.player-card--copy');
+
+      currentPlayer.moveTo(parent);
+      shape.moveTo(currentParent);
       shape.to({
-        x: cardCopy.attrs.x,
-        y: cardCopy.attrs.y,
+        x: currentPlayer.attrs.x,
+        y: currentPlayer.attrs.y,
+        duration: 0.1,
+        onFinish: () => {
+          fire(slot, 'drop', { evt: event.evt });
+        },
+      });
+      currentPlayer.to({
+        x: dropPlayer.attrs.x,
+        y: dropPlayer.attrs.y,
         duration: 0.1,
         onFinish: () => {
           fire(startSlotRef.current, 'drop', { evt: event.evt });
-          cardCopy.destroy();
+          dropPlayer.destroy();
           startSlotRef.current = undefined;
         },
       });
-      return;
-    }
-
-
-    const parent = startSlotRef.current.parent;
-
-    const currentParent = slot.parent;
-    const currentPlayer = currentParent.findOne('.player-card');
-    const dropPlayer = parent.findOne('.player-card--copy');
-
-    currentPlayer.moveTo(parent);
-    shape.moveTo(currentParent);
-    shape.to({
-      x: currentPlayer.attrs.x,
-      y: currentPlayer.attrs.y,
-      duration: 0.1,
-      onFinish: () => {
-        fire(slot, 'drop', { evt: event.evt });
-      },
-    });
-    currentPlayer.to({
-      x: dropPlayer.attrs.x,
-      y: dropPlayer.attrs.y,
-      duration: 0.1,
-      onFinish: () => {
-        fire(startSlotRef.current, 'drop', { evt: event.evt });
-        dropPlayer.destroy();
-        startSlotRef.current = undefined;
-      },
-    });
-  }, [stageRef]);
+    },
+    [stageRef],
+  );
 
   return { layerRef, layerTempRef, onDragStart, onDragMove, onDragEnd };
 };
@@ -188,7 +193,7 @@ function Field({ PlayersStore, classes, ...props }) {
           onClick: () => {
             // props.mixpanel.track('Download as File')
             download(
-              JSON.stringify(props.AppStore.toJSON()),
+              props.AppStore.getEncriptedState(),
               `rf_${new Date().getTime()}.rbf`,
               'application/json',
             );
