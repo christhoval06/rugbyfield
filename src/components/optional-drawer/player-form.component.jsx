@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
-import classNames from 'classnames';
 import { compose } from 'recompose';
 import { withStyles } from '@mui/styles';
 import Divider from '@mui/material/Divider';
 import Fab from '@mui/material/Fab';
 import ArrowForward from '@mui/icons-material/ArrowForward';
+
+import { cn } from '@/utils/cn';
 
 import InputField from '../formFields/InputField';
 import SelectorField from '../formFields/SelectorField';
@@ -155,7 +156,7 @@ function PlayerFormComponent(props) {
         </>
       )}
 
-      <div className={classNames(classes.toolbar, classes.centered)}>
+      <div className={cn(classes.toolbar, classes.centered)}>
         <Fab color='primary' aria-label='add or save' onClick={_onSubmit}>
           <ArrowForward />
         </Fab>

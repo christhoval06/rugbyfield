@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import InfoIcon from '@mui/icons-material/Info';
@@ -12,6 +11,8 @@ import Snackbar from '@mui/material/Snackbar';
 import SnackbarContent from '@mui/material/SnackbarContent';
 import WarningIcon from '@mui/icons-material/Warning';
 import { withStyles } from '@mui/styles';
+
+import { cn } from '@/utils/cn';
 
 const variantIcon = {
   success: CheckCircleIcon,
@@ -61,11 +62,11 @@ function CustomizedSnackbar(props) {
       onClose={onClose}
     >
       <SnackbarContent
-        className={classNames(classes[variant], className)}
+        className={cn(classes[variant], className)}
         aria-describedby='client-snackbar'
         message={
           <span id='client-snackbar' className={classes.message}>
-            <Icon className={classNames(classes.icon, classes.iconVariant)} />
+            <Icon className={cn(classes.icon, classes.iconVariant)} />
             {message}
           </span>
         }

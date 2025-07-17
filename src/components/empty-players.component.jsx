@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
-import classNames from 'classnames';
 import { compose } from 'recompose';
 import { withStyles } from '@mui/styles';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
+
+import { cn } from '@/utils/cn';
 
 import { DEFAULT_OPTIONS } from '../constants/options';
 
@@ -145,7 +146,7 @@ function EmptyPlayersComponent(props) {
             <Link
               underline='none'
               component='button'
-              className={classNames(classes.assertText, classes.messageLink)}
+              className={cn(classes.assertText, classes.messageLink)}
               onClick={OptionsStore.toggleLeftDrawer}
             >
               HERE &nbsp;
@@ -154,7 +155,7 @@ function EmptyPlayersComponent(props) {
             <Link
               underline='none'
               component='button'
-              className={classNames(classes.assertText, classes.messageLink)}
+              className={cn(classes.assertText, classes.messageLink)}
               onClick={() => fileField.current.click()}
             >
               Players From File

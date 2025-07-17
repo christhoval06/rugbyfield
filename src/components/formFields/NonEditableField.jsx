@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { withStyles } from '@mui/styles';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Edit from '@mui/icons-material/Edit';
+
+import { cn } from '@/utils/cn';
 
 const styles = (theme) => ({
   toolbar: theme.mixins.toolbar,
@@ -28,12 +29,12 @@ const styles = (theme) => ({
 
 function NonEditableField({ classes, onChange, value }) {
   return (
-    <div className={classNames(classes.toolbar, classes.InputEditMode)}>
-          <Typography className={classes.InputEditModeText}>{value}</Typography>
-          <IconButton className={classes.InputEditModeButton} onClick={onChange}>
-            <Edit />
-          </IconButton>
-        </div>
+    <div className={cn(classes.toolbar, classes.InputEditMode)}>
+      <Typography className={classes.InputEditModeText}>{value}</Typography>
+      <IconButton className={classes.InputEditModeButton} onClick={onChange}>
+        <Edit />
+      </IconButton>
+    </div>
   );
 }
 

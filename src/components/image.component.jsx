@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { withStyles } from '@mui/styles';
 import 'cropperjs/dist/cropper.css';
+
+import { cn } from '@/utils/cn';
 
 const styles = {
   container: {
@@ -96,9 +97,7 @@ function ImageComponent(props) {
           <div className={classes.imageContainer}>
             <img src={src} alt='User preview' className={classes.imageView} />
           </div>
-          <div
-            className={classNames(classes.imageOverlay, { [classes.imageOverlayHover]: overlay })}
-          >
+          <div className={cn(classes.imageOverlay, { [classes.imageOverlayHover]: overlay })}>
             {children}
           </div>
         </div>

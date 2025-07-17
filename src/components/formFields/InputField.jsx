@@ -1,11 +1,12 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { withStyles } from '@mui/styles';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
+
+import { cn } from '@/utils/cn';
 
 import NonEditableField from './NonEditableField';
 
@@ -38,7 +39,7 @@ function InputField({
   helperText,
   label,
   maxLength,
-  required
+  required,
 }) {
   const [editable, setEditable] = React.useState(false);
   const [value, setValue] = React.useState(() => defaultValue ?? '');
@@ -58,14 +59,14 @@ function InputField({
       error={error?.attribute === fieldName}
       required={required}
       variant='standard'
-      sx={{padding: '0px 8px'}}
+      sx={{ padding: '0px 8px' }}
     >
       <Typography color='secondary'>{label}</Typography>
       {editMode && !editable && (
         <NonEditableField value={defaultValue} onChange={() => setEditable(true)} />
       )}
       {(!editMode || editable) && (
-        <div className={classNames(classes.toolbar, classes.textField, classes.ended)}>
+        <div className={cn(classes.toolbar, classes.textField, classes.ended)}>
           <TextField
             className={classes.textField}
             defaultValue={defaultValue}
@@ -73,7 +74,7 @@ function InputField({
             helperText={error?.attribute === fieldName ? error.message : helperText}
             onChange={_onChange}
             margin='normal'
-            variant="standard" 
+            variant='standard'
             inputProps={{
               name: fieldName,
               maxLength,
@@ -103,7 +104,7 @@ InputField.propTypes = {
   helperText: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   maxLength: PropTypes.number.isRequired,
-  required: PropTypes.bool
+  required: PropTypes.bool,
 };
 
 export default withStyles(styles)(InputField);

@@ -3,16 +3,16 @@ import CryptoJS from 'crypto-js';
 const SECRET_KEY = 'JngUH6)T<x69^-R|$7nWPxi"4:(L6J@8tZN8vPbiop;(Z>Fk*c<]R&<}?sc3;cc';
 const FILE_HEADER = 'RugbyFieldApp';
 
-export function encrypt(data) {
+export function encrypt(data: string) {
   return CryptoJS.AES.encrypt(data, SECRET_KEY).toString();
 }
 
-export function decrypt(encrypted) {
+export function decrypt(encrypted: string) {
   const bytes = CryptoJS.AES.decrypt(encrypted, SECRET_KEY);
   return bytes.toString(CryptoJS.enc.Utf8);
 }
 
-export function encryptAndSign(json) {
+export function encryptAndSign(json: string) {
   const ciphertext = CryptoJS.AES.encrypt(json, SECRET_KEY).toString();
   const hmac = CryptoJS.HmacSHA256(ciphertext, SECRET_KEY).toString(); // firma HMAC
 
@@ -20,7 +20,7 @@ export function encryptAndSign(json) {
   return `${FILE_HEADER}|${hmac}|${ciphertext}`;
 }
 
-export function verifyAndDecrypt(fileContent) {
+export function verifyAndDecrypt(fileContent: string) {
   try {
     // const { data, hmac } = JSON.parse(fileContent);
     const [header, hmac, encrypted] = fileContent.split('|');

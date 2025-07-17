@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
-import classNames from 'classnames';
 import { compose } from 'recompose';
 import { withStyles } from '@mui/styles';
 import Divider from '@mui/material/Divider';
@@ -19,6 +18,8 @@ import FormLabel from '@mui/material/FormLabel';
 
 import { DEFAULT_OPTIONS } from '../../constants/options';
 import { GAME_VARIANTS } from '../../constants/players';
+
+import { cn } from '@/utils/cn';
 
 import CropperComponent from '../cropper.component';
 import OptionalHeaderComponent from './optional-header.component';
@@ -167,7 +168,7 @@ function OptionsComponent(props) {
       <form className={classes.form} noValidate autoComplete='off'>
         <div className={classes.formContainer}>
           <FormControl className={classes.formControl} sx={{ padding: '0px 8px' }}>
-            <div className={classNames(classes.flex, classes.row)}>
+            <div className={cn(classes.flex, classes.row)}>
               <Typography color='secondary'>Background Color</Typography>
             </div>
             <ColorPickerComponent

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { withStyles } from '@mui/styles';
 import { SketchPicker } from 'react-color';
+
+import { cn } from '@/utils/cn';
 
 const styles = {
   color: {
@@ -31,13 +32,12 @@ const styles = {
   },
 };
 
-function ColorPickerComponent({classes, className, onColorSelected, color, defaultColor }) {
+function ColorPickerComponent({ classes, className, onColorSelected, color, defaultColor }) {
   const [state, setState] = useState({
     displayColorPicker: false,
     color: color,
     defaultColor: defaultColor,
   });
-
 
   const onClick = () => {
     setState((s) => ({ ...s, displayColorPicker: !s.displayColorPicker }));
@@ -53,7 +53,7 @@ function ColorPickerComponent({classes, className, onColorSelected, color, defau
   };
 
   return (
-    <div className={classNames('color-picker-container', className)}>
+    <div className={cn('color-picker-container', className)}>
       <div className={classes.swatch} onClick={onClick}>
         <div className={classes.color} style={{ background: state.color }} />
       </div>

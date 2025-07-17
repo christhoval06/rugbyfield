@@ -1,5 +1,5 @@
-import {useContext} from 'react';
-import {MobXProviderContext} from 'mobx-react';
+import { useContext } from 'react';
+import { MobXProviderContext } from 'mobx-react';
 
 export function useStore(mapStateToProps) {
   const context = useContext(MobXProviderContext);

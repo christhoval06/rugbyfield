@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
 import { compose } from 'recompose';
-import classNames from 'classnames';
 import { withStyles } from '@mui/styles';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -19,6 +18,7 @@ import { DEFAULT_OPTIONS } from '../constants/options';
 import { DRAWER_WIDTH } from '../configs';
 
 import { useMenu } from '../hooks/MenuProvider';
+import { cn } from '@/utils/cn';
 
 import AppTitleComponent from './side-bar/app-title.component';
 import CustomizedSnackbar from './customized-snack-bar.component';
@@ -111,7 +111,7 @@ function AppBarComponent(props) {
       <AppBar
         color='inherit'
         position='fixed'
-        className={classNames(classes.appBar, {
+        className={cn(classes.appBar, {
           [classes.appBarFull]: !PlayersStore.havePlayers,
           [classes.withSideBar]: PlayersStore.havePlayers,
         })}

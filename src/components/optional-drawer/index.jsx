@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { compose } from 'recompose';
 import { observer, inject } from 'mobx-react';
 import { withStyles } from '@mui/styles';
@@ -8,11 +7,13 @@ import Drawer from '@mui/material/Drawer';
 
 import { DRAWER_WIDTH } from '../../configs';
 
+import { cn } from '@/utils/cn';
+
 const styles = (theme) => ({
   drawerPaper: {
     position: 'relative',
     width: DRAWER_WIDTH,
-  }
+  },
 });
 
 function OptionalDrawer(props) {
@@ -22,7 +23,7 @@ function OptionalDrawer(props) {
   return (
     <Drawer
       // variant='permanent'
-      classes={{paper: classNames(classes.drawerPaper)}}
+      classes={{ paper: cn(classes.drawerPaper) }}
       anchor={anchor}
       open={OptionsStore[`${anchor}Open`]}
     >

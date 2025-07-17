@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
-import classNames from 'classnames';
 import { compose } from 'recompose';
 import { withStyles } from '@mui/styles';
 import Box from '@mui/material/Box';
+
+import { cn } from '@/utils/cn';
 
 import { DRAWER_WIDTH } from '../configs';
 import Field from '../components/field';
@@ -22,18 +23,19 @@ const styles = (theme) => ({
     }),
     alignItems: 'center',
     justifyContent: 'center',
-    height: '100vh'
+    height: '100vh',
   },
   full: {},
   withSideBar: {
-    width: `calc(100% - ${DRAWER_WIDTH}px)`
-  }
+    width: `calc(100% - ${DRAWER_WIDTH}px)`,
+  },
 });
 
 function ContentComponent({ OptionsStore, PlayersStore, classes }) {
   return (
-    <Box component="main"
-      className={classNames(classes.content, {
+    <Box
+      component='main'
+      className={cn(classes.content, {
         [classes.full]: !PlayersStore.havePlayers,
         [classes.withSideBar]: PlayersStore.havePlayers,
       })}

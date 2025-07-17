@@ -1,4 +1,4 @@
-export function isVersionCodeLessThanCurrent(versionCode, currentVersion) {
+export function isVersionCodeLessThanCurrent(versionCode: string, currentVersion: string) {
   const v1 = versionCode.split('.').map(Number);
   const v2 = currentVersion.split('.').map(Number);
 
